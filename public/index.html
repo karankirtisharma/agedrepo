@@ -8,14 +8,6 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..800&family=Limelight&family=Manrope:wght@300;400&display=swap" rel="stylesheet">
-<script>
-  // apply the saved theme before first paint (default: blueprint)
-  (function () {
-    var t = new URLSearchParams(location.search).get("theme");
-    try { t = t || localStorage.getItem("ruddix-theme"); } catch (e) {}
-    document.documentElement.dataset.theme = t === "crimson" ? "crimson" : "blueprint";
-  })();
-</script>
 <link rel="stylesheet" href="css/style.css">
 <script type="importmap">
 { "imports": {
@@ -108,7 +100,7 @@
   <p class="intro-title__kicker" data-brand="kicker">Creative web · Automation · SaaS</p>
   <h1><span data-brand="name">Ruddix</span><span data-brand="sub">Studio</span></h1>
   <p class="intro-title__tag" data-brand="tagline"></p>
-  <p class="intro-title__hint">Scroll to begin</p>
+  <p class="intro-title__hint">Move to see the build · Scroll to begin</p>
 </div>
 <div id="caption-layer" class="caption-layer" aria-live="polite"></div>
 <div id="metrics" class="metrics" aria-hidden="true"></div>
@@ -184,14 +176,10 @@
   <div class="footer__base">
     <p data-brand="tagline"></p>
     <a href="#legal">Legal</a>
-    <a href="sfx/CREDITS.txt" target="_blank" rel="noopener">Sound credits</a>
+    <a href="music/CREDITS.txt" target="_blank" rel="noopener">Music credits</a>
   </div>
 </footer>
 
-<button id="theme-toggle" class="theme-toggle" type="button" aria-label="Switch colour theme">
-  <span class="theme-toggle__swatch" aria-hidden="true"><i style="background:var(--ink)"></i><i style="background:var(--red)"></i><i style="background:var(--brass)"></i></span>
-  <span class="theme-toggle__label"></span>
-</button>
 <canvas id="stage-canvas" class="stage-canvas" aria-hidden="true"></canvas>
 
 <script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/gsap.min.js"></script>

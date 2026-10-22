@@ -38,10 +38,7 @@ export class Stage {
     cam.lookAt(0, 0, 0);
     const view = { el, kind, scene, cam, obj: pivot, lift: 0, hover: false, phase: Math.random() * 6 };
     const host = el.closest("article, figure, a") || el;
-    host.addEventListener("pointerenter", () => {
-      view.hover = true;
-      window.sfx?.("levitate");
-    });
+    host.addEventListener("pointerenter", () => (view.hover = true));
     host.addEventListener("pointerleave", () => (view.hover = false));
     host.addEventListener("focusin", () => (view.hover = true));
     host.addEventListener("focusout", () => (view.hover = false));

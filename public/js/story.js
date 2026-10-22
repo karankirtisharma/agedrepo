@@ -6,7 +6,6 @@ import { ArrivalScene, WorkshopScene } from "./scenes/prologue.js";
 import { IdeaScene, DesignScene } from "./scenes/workflow-a.js";
 import { BuildScene, AutomateScene } from "./scenes/workflow-b.js";
 import { LaunchScene, ScaleScene } from "./scenes/workflow-c.js";
-import { audio, sfx } from "./audio.js";
 
 const REGISTRY = {
   intro: IntroScene,
@@ -32,12 +31,15 @@ const lerpRect = (a, b, t) => ({ x: lerp(a.x, b.x, t), y: lerp(a.y, b.y, t), w: 
  * instead of cropping the sides.
  */
 const MIN_ASPECT = 1.15;
+const CREEP = 0.08; // share of the way to the dive target the camera covers during a scene
+let fovKick = 1; // widens every lens a little with scroll speed, so fast scrolling feels like travel
 function fitCamera(cam, aspect) {
   cam.aspect = aspect;
   if (cam.isPerspectiveCamera) {
     cam.userData.baseFov ??= cam.fov;
     const base = THREE.MathUtils.degToRad(cam.userData.baseFov);
-    cam.fov = aspect >= MIN_ASPECT ? cam.userData.baseFov : Math.min(100, THREE.MathUtils.radToDeg(2 * Math.atan((Math.tan(base / 2) * MIN_ASPECT) / aspect)));
+    const fov = aspect >= MIN_ASPECT ? cam.userData.baseFov : Math.min(100, THREE.MathUtils.radToDeg(2 * Math.atan((Math.tan(base / 2) * MIN_ASPECT) / aspect)));
+    cam.fov = Math.min(110, fov * fovKick);
   }
   cam.updateProjectionMatrix();
 }
@@ -96,7 +98,6 @@ export class Story {
   bindInput() {
     const down = (e) => {
       e.preventDefault();
-      if (!this.input.holding) sfx("click");
       this.input.holding = true;
       this.hold.classList.add("is-holding");
     };
@@ -144,14 +145,16 @@ export class Story {
     const local = scroll - this.spacer.offsetTop;
     this.input.time = time;
     tickInk(time);
+    // scroll speed in viewports per second, smoothed, drives the lens kick
+    const speed = Math.abs(scroll - (this.lastScroll ?? scroll)) / h / Math.max(dt, 1e-3);
+    this.lastScroll = scroll;
+    this.speed = lerp(this.speed ?? 0, Math.min(1, speed / 2.5), 1 - Math.pow(0.02, dt));
+    fovKick = 1 + this.speed * 0.07;
 
     const active = local > -h && local < this.total;
     this.canvas.style.visibility = active ? "visible" : "hidden";
     this.panelLayer.style.visibility = active ? "visible" : "hidden";
-    if (!active) {
-      this.sound(local >= this.total ? "sections" : "intro");
-      return this.hideAll();
-    }
+    if (!active) return this.hideAll();
 
     const r = this.renderer;
     r.setScissorTest(false);
@@ -189,10 +192,12 @@ export class Story {
     for (const s of this.scenes) if (s !== pinned && s !== out && s !== inc) s.scene.hide?.();
 
     this.panelLayer.style.clipPath = "";
+    this.panelLayer.style.opacity = "";
     if (pinned) {
       this.input.shift = slide;
       this.input.dive = 0;
       pinned.scene.update(pinnedP, dt, this.input);
+      this.creep(pinned.scene, pinned.scene.layout(pinnedP, this.vp)[0]?.cam, pinnedP);
       const rect = { x: 0, y: -slide * h, w, h };
       const next = this.scenes[pinnedIndex + 1];
       const rv = pinned.scene.reveal;
@@ -203,6 +208,7 @@ export class Story {
         next.scene.update(0, dt, this.input);
         this.renderScene(next, 0, rect);
         this.panelLayer.style.clipPath = `inset(${rv.y * h}px ${(1 - rv.x - rv.w) * w}px ${(1 - rv.y - rv.h) * h}px ${rv.x * w}px)`;
+        this.panelLayer.style.opacity = String(rv.fade ?? 1);
         this.input.shift = slide;
         for (const pnl of pinned.scene.layout(pinnedP, this.vp)) {
           if (pnl.visible) this.drawPanel(pinned.scene, pnl.cam, { x: rect.x + pnl.x * w, y: rect.y + pnl.y * h, w: pnl.w * w, h: pnl.h * h }, rect, true);
@@ -212,13 +218,6 @@ export class Story {
       }
     } else if (out) {
       this.renderDive(out, inc, k, dt, full);
-    }
-    this.sound(pinned ? pinned.cfg.id : !out ? "intro" : k < 0.5 ? out.cfg.id : inc.cfg.id, out ? k : -1);
-    for (const s of this.scenes) {
-      if (s === pinned) {
-        s.scene.sound?.(pinnedP, s.lastP ?? pinnedP, dt, this.input);
-        s.lastP = pinnedP;
-      } else s.lastP = undefined;
     }
 
     for (let i = this.borderIndex; i < this.borders.length; i++) this.borders[i].style.display = "none";
@@ -235,23 +234,19 @@ export class Story {
     if (step && this.stepEl.textContent !== step) this.stepEl.textContent = step;
   }
 
-  /** Ambience/music follow the scene on screen; dives whoosh and burst. */
-  sound(id, dive = -1) {
-    audio.scene(id);
-    if (dive < 0) {
-      this.whooshed = this.burst = false;
-      return;
-    }
-    if (!this.whooshed) sfx("whoosh");
-    if (!this.burst && dive > 0.3) sfx("burst");
-    this.whooshed = true;
-    this.burst ||= dive > 0.3;
+  /**
+   * Through each scene the main camera creeps a little toward its dive target, so the push that
+   * becomes the dive is already under way inside the scene: one continuous camera move.
+   */
+  creep(scene, cam, p) {
+    if (scene.diveTarget && cam?.isPerspectiveCamera) cam.position.lerp(scene.diveTarget, CREEP * p);
   }
 
   /** Outgoing scene dives into its target; incoming scene grows out of that spot. */
   renderDive(out, inc, k, dt, full) {
     const { w, h } = this.vp;
-    const kd = easeInOut(k);
+    // half linear, half eased: the push is already moving the moment the scene ends (no stop-go at the seam)
+    const kd = lerp(k, easeInOut(k), 0.5);
 
     // ---- outgoing: its main panel expands to the full screen, camera pushes into the target
     this.input.shift = 1; // hides the scene's DOM overlays during the move
@@ -264,6 +259,7 @@ export class Story {
     const rect = lerpRect(fromRect, full, easeOut(clamp01(k * 1.8)));
     let origin = { x: w / 2, y: h / 2 };
     const target = out.scene.diveTarget;
+    this.creep(out.scene, cam, 1);
     if (target && cam.isPerspectiveCamera) {
       const q0 = cam.quaternion.clone();
       cam.position.lerp(target, kd * 0.82);
@@ -363,14 +359,17 @@ export class Story {
       c.el.style.visibility = on ? "visible" : "hidden";
       if (on) {
         window.gsap?.fromTo(c.el.querySelectorAll(".w"), { opacity: 0, y: 6 }, { opacity: 1, y: 0, duration: 0.35, stagger: 0.025, ease: "power2.out" });
-        sfx("textbox");
       }
     }
     if (!on) return;
     const m = this.vp.mobile;
     const x = m ? 0.05 : c.cfg.x, y = m ? Math.min(c.cfg.y, 0.78) : c.cfg.y, wd = m ? 0.9 : c.cfg.w;
+    // fades and drifts with the scroll at both ends instead of popping
+    const fin = clamp01((p - c.cfg.from) / 0.04), fout = clamp01((c.cfg.to - p) / 0.04);
+    const drift = (1 - fin) * 0.02 - (1 - fout) * 0.02;
+    c.el.style.opacity = String(Math.min(fin, fout));
     c.el.style.width = `${wd * 100}vw`;
-    c.el.style.transform = `translate3d(${x * 100}vw, ${(y - shift) * 100}vh, 0)`;
+    c.el.style.transform = `translate3d(${x * 100}vw, ${(y - shift + drift) * 100}vh, 0)`;
   }
 
   updateHold(cfg) {

@@ -1,9 +1,7 @@
 import * as THREE from "three";
-import { StoryScene, panel, range, ease, easeOut, lerp, clamp01, inkMesh, makeCursor, makePencil, ruledPaper, strokeDrawing, heroTexture, LAYOUT, crossed } from "./common.js";
-import { audio, sfx } from "../audio.js";
+import { StoryScene, panel, range, ease, easeOut, lerp, clamp01, inkMesh, makeCursor, makePencil, ruledPaper, strokeDrawing, heroTexture, LAYOUT } from "./common.js";
 import { inkMaterial, addOutline, PALETTE } from "../ink.js";
 import { canvasTexture } from "../assets.js";
-import { themeColor } from "../themes.js";
 
 /** Sketchbook spread as the ground: two ruled pages and a spiral down the spine. */
 function sketchbookGround(scene) {
@@ -122,15 +120,6 @@ export class IdeaScene extends StoryScene {
     this.camNote.position.set(-12.4 + Math.sin(input.time * 0.3) * 0.2, 6.5, 1.4);
     this.camNote.lookAt(this.note.position);
   }
-  sound(p, prev, dt) {
-    // pencil grain follows how fast the line is being drawn (stops when you stop scrolling)
-    const drawn = (q) => ease(range(q, 0.06, 0.82)) + range(q, 0.82, 0.95);
-    const v = Math.abs(drawn(p) - drawn(prev)) / Math.max(dt, 1e-3);
-    audio.rate("pencil", Math.min(45, v * 500));
-    if (crossed(prev, p, 0.18)) sfx("swish"); // close-up panel
-    if (crossed(prev, p, 0.42)) sfx("pop"); // sticky note panel
-    if (crossed(prev, p, 0.9)) sfx("levitate"); // pencil lifts away
-  }
 }
 
 // ---------------------------------------------------------------------------
@@ -161,7 +150,7 @@ export class DesignScene extends StoryScene {
       geo.translate(0, r.h / 2, 0);
       const m = inkMesh(geo, { color: this.grey.clone(), shade: "#111013", hatchScale: 1.1, lit: 0.2 }, 0.04);
       m.position.set(r.x + r.w / 2, 0, r.z + r.d / 2);
-      m.userData = { delay: i * 0.07, press: 0, target: new THREE.Color(themeColor(r.color)), lit: r.color === "#111013" ? 1 : 0.2 };
+      m.userData = { delay: i * 0.07, press: 0, target: new THREE.Color(r.color), lit: r.color === "#111013" ? 1 : 0.2 };
       if (i === 1) {
         const face = new THREE.Mesh(new THREE.PlaneGeometry(r.w * 0.92, r.d * 0.85), inkMaterial({ color: "#ffffff", lit: 1, map: heroTex, opacity: 0 }));
         face.material.transparent = true;
@@ -249,13 +238,5 @@ export class DesignScene extends StoryScene {
     const o = ease(range(p, 0, 0.6));
     this.cam.position.set(lerp(0.5, 11, o), lerp(24, 10, o), lerp(2, 15, o));
     this.cam.lookAt(0, 0.5, -0.5);
-  }
-  sound(p, prev) {
-    // a pop as each block rises off the page
-    this.blocks.forEach((b, i) => crossed(prev, p, 0.07 + 0.45 * b.userData.delay) && sfx("pop", { n: i }));
-    if (crossed(prev, p, 0.3)) sfx("levitate"); // the cursor drops in
-    // a marimba note, climbing the scale, as the cursor lands and paints each block
-    const landed = (q) => (q < 0.45 ? range(q, 0.38, 0.45) - 1 : range(q, 0.45, 0.95) * (this.route.length - 1));
-    this.route.forEach((_, idx) => crossed(landed(prev), landed(p), idx - 0.1) && sfx("paint", { n: idx }));
   }
 }

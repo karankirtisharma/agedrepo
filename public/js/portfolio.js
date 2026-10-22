@@ -1,11 +1,8 @@
 import { loadAssets } from "./assets.js";
 import { setInkTextures } from "./ink.js";
 import { Stage } from "./stage.js";
-import { sfx } from "./audio.js";
 import { BRAND, PROJECTS } from "./content.js";
-import { fillBrand, smoothScroll, setupReveals, setupWipe, autoHideHeader, setupThemeToggle, setupSectionPanels, reduceMotion } from "./ui.js";
-
-window.sfx = sfx;
+import { fillBrand, smoothScroll, setupReveals, setupWipe, autoHideHeader, setupSectionPanels, reduceMotion } from "./ui.js";
 const $ = (s) => document.querySelector(s);
 
 function fillProjects() {
@@ -36,7 +33,6 @@ async function boot() {
   fillBrand();
   fillProjects();
   setupWipe();
-  setupThemeToggle();
   const assets = await loadAssets((t) => ($("#loader-pct").textContent = `${Math.round(t * 100)}%`));
   setInkTextures({ hatch: assets.textures.hatch, noise: assets.textures.noise });
   const stage = new Stage($("#stage-canvas"));

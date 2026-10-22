@@ -1,8 +1,7 @@
 import * as THREE from "three";
-import { themeColor } from "./themes.js";
 
-// Shared palette (authored as Crimson; themeColor() maps it to the active theme).
-const col = (hex) => new THREE.Color(themeColor(hex));
+// Shared palette
+const col = (hex) => new THREE.Color(hex);
 export const PALETTE = {
   paper: col("#efe9dd"),
   ink: col("#111013"),
@@ -111,9 +110,7 @@ const inkFragment = /* glsl */ `
  */
 export function inkMaterial({ color = "#efe9dd", shade, ink = "#111013", hatchScale = 2.2, hatchAngle = 0, lit = 0, map = null, opacity = 1, rim = 0, side = THREE.FrontSide } = {}) {
   // a textured surface keeps its colour white so the map shows as drawn
-  const c = color instanceof THREE.Color ? color : new THREE.Color(themeColor(color));
-  shade = shade && !(shade instanceof THREE.Color) ? themeColor(shade) : shade;
-  ink = ink instanceof THREE.Color ? ink : themeColor(ink);
+  const c = color instanceof THREE.Color ? color : new THREE.Color(color);
   return new THREE.ShaderMaterial({
     vertexShader: inkVertex,
     fragmentShader: inkFragment,
@@ -148,7 +145,7 @@ export function glassMaterial(mesh, { color = "#fbf7ee", opacity = 0.16 } = {}) 
 const outlineMat = (width, color) =>
   new THREE.ShaderMaterial({
     side: THREE.BackSide,
-    uniforms: { uWidth: { value: width }, uColor: { value: new THREE.Color(themeColor(color)) } },
+    uniforms: { uWidth: { value: width }, uColor: { value: new THREE.Color(color) } },
     vertexShader: /* glsl */ `
       uniform float uWidth;
       void main() {
@@ -195,7 +192,7 @@ export function inkify(root, byName = {}, fallback = {}) {
 export function backdrop({ top = "#111013", bottom = "#111013", grain = 0.06 } = {}) {
   return new THREE.ShaderMaterial({
     depthWrite: false,
-    uniforms: { ...shared, uTop: { value: new THREE.Color(themeColor(top)) }, uBottom: { value: new THREE.Color(themeColor(bottom)) }, uGrain: { value: grain } },
+    uniforms: { ...shared, uTop: { value: new THREE.Color(top) }, uBottom: { value: new THREE.Color(bottom) }, uGrain: { value: grain } },
     vertexShader: /* glsl */ `varying vec2 vUv; void main(){ vUv = uv; gl_Position = vec4(position.xy, 0.9999, 1.0); }`,
     fragmentShader: /* glsl */ `
       uniform vec3 uTop; uniform vec3 uBottom; uniform float uGrain; uniform sampler2D uNoise; uniform float uTime;

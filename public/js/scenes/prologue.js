@@ -1,6 +1,5 @@
 import * as THREE from "three";
-import { StoryScene, panel, range, ease, lerp, makeIcon, instanced, inkMesh, mat4, glow, crossed } from "./common.js";
-import { audio, sfx } from "../audio.js";
+import { StoryScene, panel, range, ease, lerp, makeIcon, instanced, inkMesh, mat4, glow } from "./common.js";
 import { inkMaterial, inkify, addOutline, PALETTE, sharedUniforms } from "../ink.js";
 import { canvasTexture, cloneModel } from "../assets.js";
 import { BRAND } from "../content.js";
@@ -138,14 +137,12 @@ export class ArrivalScene extends StoryScene {
     this.doorR.position.x = 0.55 + open * 1.05;
     this.spill.material.uniforms.uOpacity.value = open * 0.55;
     this.spill.material.transparent = true;
-    this.doorOpen = open; // read by the sound layer
 
     const target = new THREE.Vector2(input.pointer.x * 0.5 + 0.5, input.pointer.y * 0.5 + 0.5);
     this.light2.uniforms.uPointer.value.lerp(target, 0.08);
 
     raiseArm(this.fig, "R", ease(range(p, 0.42, 0.56)) * 0.55);
     const step = ease(range(p, 0.58, 0.86));
-    this.step = step;
     this.fig.root.position.z = lerp(4.6, 0.6, step);
     this.fig.root.position.y = Math.abs(Math.sin(step * Math.PI * 4)) * 0.04;
 
@@ -153,13 +150,6 @@ export class ArrivalScene extends StoryScene {
     const push = ease(range(p, 0.55, 1));
     this.cam.position.set(0, lerp(1.8, 1.6, push), lerp(11, 4.2, push));
     this.cam.lookAt(0, 1.4, -2);
-  }
-  sound(p, prev) {
-    if (crossed(prev, p, 0.05)) sfx("door");
-    if (crossed(p, prev, 0.3)) sfx("doorClose"); // scrolling back shuts them again
-    const steps = Math.floor(this.step * 4);
-    if (steps !== this.lastStep && this.lastStep !== undefined && this.step > 0 && this.step < 1) sfx("step");
-    this.lastStep = steps;
   }
 }
 
@@ -233,22 +223,10 @@ export class WorkshopScene extends StoryScene {
     this.cam.lookAt(0, lerp(1.4, 1.15, range(p, 0.7, 1)), z - 10);
     // he walks ahead down the aisle and stops beside the bench
     const walk = ease(range(p, 0, 0.92));
-    this.walk = walk;
     this.fig.root.position.set(lerp(-0.4, -1.35, range(p, 0.6, 0.92)), Math.abs(Math.sin(walk * Math.PI * 14)) * 0.035, lerp(1, this.end + 1.2, walk));
     this.fig.root.rotation.y = Math.PI + range(p, 0.85, 1) * 0.7; // turns toward the bench
     this.camTools.position.set(0.7, 2.0, this.end + 1.9);
     this.camTools.lookAt(0, 1.2, this.end);
     this.tools.forEach((t, i) => (t.rotation.y = Math.sin(input.time * 0.6 + i) * 0.15));
-  }
-  sound(p, prev, dt) {
-    const v = Math.abs(p - prev) / Math.max(dt, 1e-3);
-    // the carriage rumbles louder and faster as you move down it; footsteps on the carpet
-    const move = Math.min(1, v * 2);
-    audio.bed("train", 0.8 + move * 0.5, 1 + move * 0.15);
-    const steps = Math.floor(this.walk * 14);
-    if (steps !== this.lastStep && this.lastStep !== undefined && this.walk > 0 && this.walk < 1) sfx("carpet");
-    this.lastStep = steps;
-    if (crossed(prev, p, 0.62)) sfx("swish"); // tools close-up panel
-    if (crossed(prev, p, 0.9)) sfx("chime");
   }
 }

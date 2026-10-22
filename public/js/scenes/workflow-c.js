@@ -1,10 +1,8 @@
 import * as THREE from "three";
-import { StoryScene, range, ease, easeOut, lerp, clamp01, inkMesh, makeCursor, makeSite, siteTexture, instanced, paperPlaneGeometry, crossed } from "./common.js";
-import { audio, sfx } from "../audio.js";
+import { StoryScene, range, ease, easeOut, lerp, clamp01, inkMesh, makeCursor, makeSite, siteTexture, instanced, paperPlaneGeometry } from "./common.js";
 import { canvasTexture } from "../assets.js";
 import { inkMaterial, addOutline, PALETTE } from "../ink.js";
 import { METRICS } from "../content.js";
-import { themeColor } from "../themes.js";
 
 const box = (w, h, d) => new THREE.BoxGeometry(w, h, d);
 
@@ -34,7 +32,7 @@ function skylineStrip({ z, minH, maxH, color, windows, seed }) {
   }
   group.add(instanced(box(1, 1, 1), { color, shade: "#111013", hatchScale: 1.2, hatchAngle: 1.57, lit: 0.35 }, towers, 0.05));
   if (lights.length) {
-    const lm = new THREE.InstancedMesh(box(0.35, 0.22, 0.02), new THREE.MeshBasicMaterial({ color: themeColor("#ffcf7a") }), lights.length);
+    const lm = new THREE.InstancedMesh(box(0.35, 0.22, 0.02), new THREE.MeshBasicMaterial({ color: "#ffcf7a" }), lights.length);
     lights.forEach((m, i) => lm.setMatrixAt(i, m));
     group.add(lm);
   }
@@ -54,7 +52,7 @@ export class LaunchScene extends StoryScene {
       new THREE.PlaneGeometry(700, 220),
       new THREE.ShaderMaterial({
         depthWrite: false,
-        uniforms: { uTop: { value: new THREE.Color(themeColor("#111013")) }, uBottom: { value: new THREE.Color(themeColor("#c7a25c")) } },
+        uniforms: { uTop: { value: new THREE.Color("#111013") }, uBottom: { value: new THREE.Color("#c7a25c") } },
         vertexShader: `varying vec2 vUv; void main(){ vUv = uv; gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0); }`,
         fragmentShader: `uniform vec3 uTop; uniform vec3 uBottom; varying vec2 vUv;
           void main(){ float t = smoothstep(0.38, 0.72, vUv.y); gl_FragColor = vec4(mix(uBottom, uTop, t), 1.0); }`,
@@ -135,7 +133,7 @@ export class LaunchScene extends StoryScene {
     s.add(this.trail);
 
     // wind streaks
-    this.streaks = new THREE.InstancedMesh(box(1, 0.03, 0.03), new THREE.MeshBasicMaterial({ color: themeColor("#efe9dd") }), 90);
+    this.streaks = new THREE.InstancedMesh(box(1, 0.03, 0.03), new THREE.MeshBasicMaterial({ color: "#efe9dd" }), 90);
     this.streakData = Array.from({ length: 90 }, () => ({ x: Math.random() * 80 - 40, y: Math.random() * 16 - 4, z: Math.random() * 10 - 6, l: 1 + Math.random() * 4 }));
     s.add(this.streaks);
     this.dummy = new THREE.Object3D();
@@ -232,16 +230,6 @@ export class LaunchScene extends StoryScene {
     });
     this.metricsEl.style.visibility = Math.abs(input.shift) < 0.02 ? "visible" : "hidden";
     this.metricsEl.style.opacity = String(range(p, 0.18, 0.28));
-  }
-  sound(p, prev) {
-    // wind picks up with flight speed; holding adds the boost engine
-    const fly = range(p, 0.12, 0.3);
-    audio.bed("wind", 0.5 + fly * 0.5 * this.speed);
-    audio.boost(((this.speed - 1) / 2) * 0.8);
-    if (crossed(prev, p, 0.04)) sfx("swish"); // the site folds
-    if (crossed(prev, p, 0.12)) sfx("pop"); // ...into a plane
-    if (p > 0.2 && p < 0.9 && Math.abs(p - prev) > 0) audio.rate("tick", 10); // metrics counting up
-    if (crossed(prev, p, 0.86)) sfx("levitate"); // climbs toward the sun
   }
 }
 
@@ -358,14 +346,5 @@ export class ScaleScene extends StoryScene {
     const e = ease(p);
     this.cam.position.set(Math.sin(p * 1.2) * 6 * e, lerp(0, 1, e), lerp(30, 40, e));
     this.cam.lookAt(0, 0, 0);
-  }
-  sound(p, prev, dt) {
-    // cards dealing out flutter; every user who arrives clicks; the hero click lands the chord
-    const v = Math.abs(range(p, 0.04, 0.72) - range(prev, 0.04, 0.72)) / Math.max(dt, 1e-3);
-    audio.rate("pencil", Math.min(12, v * 60));
-    let arrivals = 0;
-    for (const u of this.userData) if (crossed(prev, p, u.arrive)) arrivals++;
-    for (let i = 0; i < Math.min(3, arrivals); i++) sfx("user");
-    if (crossed(prev, p, 0.95)) sfx("success");
   }
 }

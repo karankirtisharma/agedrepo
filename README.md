@@ -37,7 +37,7 @@ The logo is a placeholder SVG `<symbol id="emblem">` in `index.html` and `portfo
 | Path | What it is |
 |---|---|
 | `public/js/story.js` | Scroll engine: pinned scenes, dive-through transitions, comic panels, captions, hold button, step label |
-| `public/js/scenes/intro.js` | Blinking caret that widens into a window onto the Idea scene |
+| `public/js/scenes/intro.js` | Interactive hero: dry-brush ink strokes that part around the pointer, the title printed by a shader (letterpress edges, 8 fps boil), a pointer wake that reveals the letters' blueprint construction and spatters ink, then a caret that opens onto the train scene. The `<h1>` stays in the page (invisible) for screen readers and search |
 | `public/js/scenes/workflow-a.js` | 01 Idea (pencil draws the site on a giant sketchbook), 02 Design (blocks pop up grey; the cursor paints them from a palette) |
 | `public/js/scenes/workflow-b.js` | 03 Build (the sketch on an empty frame; blocks snap onto it; hold to speed up), 04 Automate (isometric blueprint machine: hopper, conveyor, gears, press, bins, live monitor) |
 | `public/js/scenes/workflow-c.js` | 05 Launch (dawn side-scroll: parallax skyline, WE'RE LIVE sign, paper plane with the cursor riding), 06 Scale (one site card deals out into an R; a swarm of user cursors clicks it) |
@@ -54,16 +54,11 @@ Visitors land on a full-screen menu (Story / Portfolio / Contact). Picking one s
 
 ## Sound
 
-Sound is on by default. The entry screen has a Sound on/off pill, and picking an option is the click that lets the browser start audio. The bars button in the bottom right toggles it later, and the choice is remembered. With a deep link the entry screen is skipped, so sound waits for that button.
+One background track, no sound effects: a calm CC0 piano piece (`public/music/theme.mp3`, credits in `public/music/CREDITS.txt`, linked from the footer). It loops quietly and is on by default. Browsers only allow audio after a click or key press, so it starts with the entry-screen pick (which has a Sound on/off pill) or the first click anywhere. The bars button in the bottom right mutes it, and the choice is remembered. Code: `public/js/audio.js`; to change the music, replace `theme.mp3`.
 
-All sounds are recorded effects in `public/sfx/` (about 1 MB, loaded only once sound is on), from free CC0 packs (Kenney, OpenGameArt) plus one CC-BY train recording. Sources and licenses are in `public/sfx/CREDITS.txt`, linked from the footer as the CC-BY license asks. `public/js/audio.js` maps each effect name to a sample, volume and pitch in `SHOTS`, and each scene's ambience mix (wind, train, city, conveyor) lives in `SCENES`. The scenes trigger effects from their `sound()` methods: doors, footsteps, pencil, paper drops, keys, press thunks, user clicks and more, and dives whoosh. To swap a sound, replace its mp3 with one of the same name. `window.__audio.state()` in the console shows what's loaded and playing.
+## Colours
 
-## Colour themes
-
-- **Blueprint** (default): navy ink, cream paper, blueprint-blue surfaces, signal-orange accents.
-- **Crimson**: the original red / cream / ink palette.
-
-Visitors switch with the theme button (bottom right); the choice is remembered. `?theme=crimson` previews a theme without saving it. Colours are authored once and mapped per theme in `public/js/themes.js` (3D materials and canvas textures) and in the `:root[data-theme]` blocks in `css/style.css`. To make Crimson the default, change the fallback `"blueprint"` in `themes.js` and in the small script in each page's `<head>`.
+One palette: crimson red, cream paper and ink. The CSS variables are at the top of `css/style.css`, and the 3D/shader palette is `PALETTE` in `public/js/ink.js`.
 
 ## Review links
 

@@ -1,10 +1,8 @@
 import * as THREE from "three";
-import { StoryScene, panel, range, ease, easeOut, lerp, clamp01, makeIcon, inkMesh, makeCursor, makeSite, siteTexture, strokeDrawing, LAYOUT, crossed } from "./common.js";
-import { audio, sfx } from "../audio.js";
+import { StoryScene, panel, range, ease, easeOut, lerp, clamp01, makeIcon, inkMesh, makeCursor, makeSite, siteTexture, strokeDrawing, LAYOUT } from "./common.js";
 import { inkMaterial, PALETTE } from "../ink.js";
 import { canvasTexture } from "../assets.js";
 import { SAVED } from "../content.js";
-import { themeColor } from "../themes.js";
 
 const box = (w, h, d) => new THREE.BoxGeometry(w, h, d);
 
@@ -125,16 +123,6 @@ export class BuildScene extends StoryScene {
     const tall = this.cam.aspect < 1;
     this.cam.position.set(lerp(-0.5, 0.6, p) + (tall ? 1.6 : 0), 0.4, tall ? 13 : 11);
     this.cam.lookAt(tall ? 1.6 : -0.5, -0.4, 0);
-    this.holding = holding;
-  }
-  sound() {
-    // keys clatter while code streams; each part snaps in as it lands; a chime when it's all built
-    audio.rate("key", Math.max(0, this.flow - 0.2) * 22);
-    audio.rate("tick", this.holding ? 2.9 : 0); // cursor taps
-    const prev = this.soundBuilt ?? this.built;
-    for (const part of this.parts) if (crossed(prev, this.built, part.delay + 0.45)) sfx("snap");
-    if (crossed(prev, this.built, 0.995)) sfx("chime");
-    this.soundBuilt = this.built;
   }
 }
 
@@ -327,16 +315,16 @@ export class AutomateScene extends StoryScene {
   drawScreen(hours) {
     const g = this.screenCanvas.getContext("2d");
     const w = this.screenCanvas.width, h = this.screenCanvas.height;
-    g.fillStyle = themeColor("#111013");
+    g.fillStyle = "#111013";
     g.fillRect(0, 0, w, h);
     g.drawImage(this.siteImg, 18, 18, 230, 318);
-    g.fillStyle = themeColor("#c7a25c");
+    g.fillStyle = "#c7a25c";
     g.font = "700 26px Archivo";
     g.fillText(SAVED.label.toUpperCase(), 280, 120);
-    g.fillStyle = themeColor("#efe9dd");
+    g.fillStyle = "#efe9dd";
     g.font = "92px Limelight";
     g.fillText(hours.toLocaleString("en-US"), 276, 220);
-    g.fillStyle = themeColor("#b5161e");
+    g.fillStyle = "#b5161e";
     g.fillRect(280, 250, Math.min(330, 330 * (hours / SAVED.to)), 14);
     this.screenTex.needsUpdate = true;
   }
@@ -382,7 +370,6 @@ export class AutomateScene extends StoryScene {
       c.visible = !(u > 0.97);
     }
     const slam = Math.exp(-nearest * nearest * 10);
-    this.slam = slam;
     this.press.position.set(PRESS_X, lerp(BELT_Y + 3.0, BELT_Y + 0.45, slam), 0);
 
     // monitor counter: climbs with progress, faster while holding
@@ -401,16 +388,5 @@ export class AutomateScene extends StoryScene {
     this.cam.lookAt(this.camLook);
     this.monitor.updateMatrixWorld();
     this.diveTarget.set(0, 0, 0.2).applyMatrix4(this.monitor.matrixWorld); // into the monitor
-  }
-  sound() {
-    // the machine runs louder and faster while you hold: belt hum, gear teeth, a thunk per stamp
-    const fast = (this.speed - 1) / 2.2;
-    audio.bed("conveyor", 0.8 + fast * 0.7, 1 + fast * 0.35);
-    audio.rate("clank", this.speed * 2.6);
-    audio.boost(fast * 0.5);
-    if (crossed(this.soundSlam ?? 1, this.slam, 0.85)) sfx("thunk");
-    this.soundSlam = this.slam;
-    if (this.lastHours !== this.soundHours) audio.rate("tick", 14); // counter rolling
-    this.soundHours = this.lastHours;
   }
 }

@@ -2,12 +2,11 @@ import { loadAssets } from "./assets.js";
 import { setInkTextures } from "./ink.js";
 import { Story } from "./story.js";
 import { Stage } from "./stage.js";
-import { setSound, isSoundOn, sfx, audio } from "./audio.js";
+import { setSound, isSoundOn, soundPreference } from "./audio.js";
 import { BRAND, MANIFESTO, SERVICES, EXTRA_SERVICE, PROCESS } from "./content.js";
-import { fillBrand, smoothScroll, setupReveals, setupWipe, autoHideHeader, setupThemeToggle, setupSectionPanels, reduceMotion } from "./ui.js";
+import { fillBrand, smoothScroll, setupReveals, setupWipe, autoHideHeader, setupSectionPanels, reduceMotion } from "./ui.js";
 import { showEntry } from "./entry.js";
 
-window.sfx = sfx;
 const $ = (s) => document.querySelector(s);
 
 // ---------- copy from content.js into the DOM sections ----------
@@ -65,7 +64,6 @@ function initCarousel() {
     if (!instant && !reduceMotion) {
       const card = cards[index];
       gsap.fromTo(card.querySelectorAll(".card__title span, .card__text"), { yPercent: 40, autoAlpha: 0 }, { yPercent: 0, autoAlpha: 1, duration: 0.9, ease: "expo.out", stagger: 0.07, delay: 0.35 });
-      sfx("click");
     }
   };
   $("#process-prev").addEventListener("click", () => go(index - 1));
@@ -99,14 +97,12 @@ async function boot() {
   window.lenis = lenis;
   window.__story = story;
   window.__stage = stage;
-  window.__audio = audio;
 
   initCarousel();
   setupReveals();
   setupSectionPanels("#manifesto, #services, #process, .retail, #contact");
   autoHideHeader(lenis);
 
-  setupThemeToggle();
   $("#loader").classList.add("is-done");
   document.documentElement.classList.remove("is-locked");
   $("#intro-title").classList.add("is-in");
@@ -117,13 +113,20 @@ async function boot() {
     contact: () => lenis.scrollTo("#contact", { duration: 2.6 }),
   });
   if (!reduceMotion) {
-    gsap.from("#intro-title h1 > span", { yPercent: 100, autoAlpha: 0, duration: 1.4, ease: "expo.out", stagger: 0.12, delay: 0.2 });
     gsap.from("#intro-title p", { y: 16, autoAlpha: 0, duration: 1, ease: "power3.out", stagger: 0.1, delay: 0.6 });
   }
 
   $("#nav-story").addEventListener("click", () => lenis.scrollTo($("#story").offsetTop + story.offsetOf("arrival"), { duration: 2.2 }));
   $("#nav-contact").addEventListener("click", () => lenis.scrollTo("#contact", { duration: 2.2 }));
   $("#sound").addEventListener("click", () => setSound(!isSoundOn()));
+  // browsers only allow audio after a click or key press: start sound on the first one anywhere
+  // (unless the visitor turned it off; the entry menu and the sound button handle themselves)
+  const unlock = (e) => {
+    if (e.target.closest?.("#sound, #entry") || isSoundOn() || !soundPreference()) return;
+    setSound(true);
+  };
+  addEventListener("pointerdown", unlock, { once: true });
+  addEventListener("keydown", unlock, { once: true });
 
   let resizeT;
   addEventListener("resize", () => {
@@ -160,7 +163,6 @@ async function boot() {
       warmed = true;
     }
     stage.frame(dt, time);
-    audio.tick(dt);
   });
 }
 

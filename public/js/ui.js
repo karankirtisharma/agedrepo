@@ -1,6 +1,5 @@
 // Shared page UI: brand copy, scroll reveals, page-to-page column wipe, smooth scroll.
 import { BRAND } from "./content.js";
-import { THEMES, THEME, setTheme, nextTheme } from "./themes.js";
 
 export const reduceMotion = matchMedia("(prefers-reduced-motion: reduce)").matches;
 
@@ -20,7 +19,8 @@ export function fillBrand() {
 export function smoothScroll() {
   const { gsap, ScrollTrigger, Lenis } = window;
   gsap.registerPlugin(ScrollTrigger);
-  const lenis = new Lenis({ lerp: reduceMotion ? 1 : 0.09, smoothWheel: !reduceMotion });
+  // a slightly slower follow and lighter wheel give the story weight: it glides rather than snaps
+  const lenis = new Lenis({ lerp: reduceMotion ? 1 : 0.07, wheelMultiplier: 0.85, touchMultiplier: 1.2, smoothWheel: !reduceMotion });
   lenis.on("scroll", ScrollTrigger.update);
   gsap.ticker.lagSmoothing(0);
   return lenis;
@@ -116,22 +116,6 @@ export function setupWipe() {
         onComplete: () => (location.href = a.href),
       });
     });
-  });
-}
-
-/** Theme button: shows the current scheme; switching wipes the screen and reloads in the new colours. */
-export function setupThemeToggle() {
-  const btn = document.getElementById("theme-toggle");
-  if (!btn) return;
-  btn.querySelector(".theme-toggle__label").textContent = THEMES[THEME].label;
-  btn.title = `Switch to ${THEMES[nextTheme()].label}`;
-  btn.addEventListener("click", () => {
-    setTheme(nextTheme());
-    const cols = document.querySelectorAll(".wipe span");
-    if (reduceMotion || !cols.length) return location.reload();
-    try { sessionStorage.setItem("wipe", "1"); } catch {}
-    window.gsap.set(cols, { transformOrigin: "50% 100%" });
-    window.gsap.to(cols, { scaleY: 1, duration: 0.6, ease: "power3.inOut", stagger: { each: 0.05, from: "random" }, onComplete: () => location.reload() });
   });
 }
 

@@ -1,6 +1,5 @@
 import * as THREE from "three";
 import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
-import { themeColor } from "./themes.js";
 
 const MODELS = {
   figure: "models/figure.glb",
@@ -53,20 +52,12 @@ export function cloneModel(key) {
   return assets.models[key].clone(true);
 }
 
-/**
- * Draw text/UI onto a canvas texture. draw(ctx, w, h) does the painting.
- * Colours set on the context pass through themeColor(), so textures follow the theme too.
- */
+/** Draw text/UI onto a canvas texture. draw(ctx, w, h) does the painting. */
 export function canvasTexture(w, h, draw) {
   const c = document.createElement("canvas");
   c.width = w;
   c.height = h;
   const g = c.getContext("2d");
-  const proto = CanvasRenderingContext2D.prototype;
-  for (const prop of ["fillStyle", "strokeStyle"]) {
-    const d = Object.getOwnPropertyDescriptor(proto, prop);
-    Object.defineProperty(g, prop, { get: () => d.get.call(g), set: (v) => d.set.call(g, themeColor(v)) });
-  }
   draw(g, w, h);
   const t = new THREE.CanvasTexture(c);
   t.colorSpace = THREE.SRGBColorSpace;

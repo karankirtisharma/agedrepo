@@ -11,46 +11,6 @@
   --hot: var(--red); /* highlighted words in captions */
 }
 
-/* Blueprint (default): navy ink, cream paper, blueprint-blue surfaces, signal-orange accents */
-:root[data-theme="blueprint"] {
-  --paper: #f2ede2;
-  --ink: #0b1626;
-  --red: #2451a6;
-  --red-deep: #132c5c;
-  --brass: #ff6b2c;
-  --hot: #ff6b2c;
-}
-:root[data-theme="blueprint"] .products,
-:root[data-theme="blueprint"] .collection,
-:root[data-theme="blueprint"] .drinks {
-  background-image:
-    linear-gradient(rgba(242, 237, 226, 0.07) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(242, 237, 226, 0.07) 1px, transparent 1px);
-  background-size: 36px 36px;
-}
-:root[data-theme="blueprint"] .label--red { color: var(--brass); }
-/* navy on blueprint blue is too low-contrast: text and rules on the blue sections go cream */
-:root[data-theme="blueprint"] .products,
-:root[data-theme="blueprint"] .collection,
-:root[data-theme="blueprint"] .service { color: var(--paper); }
-:root[data-theme="blueprint"] .service { border-top-color: var(--paper); }
-:root[data-theme="blueprint"] .collection .tags li { border-color: rgba(242, 237, 226, 0.6); }
-:root[data-theme="blueprint"] .services__extra { border-top-color: rgba(242, 237, 226, 0.6); }
-:root[data-theme="blueprint"] .service__num,
-:root[data-theme="blueprint"] .products__center,
-:root[data-theme="blueprint"] .services__extra strong { color: var(--brass); }
-
-.theme-toggle {
-  position: fixed; right: calc(var(--gutter) + 40px); bottom: var(--gutter); z-index: 30;
-  display: flex; align-items: center; gap: 8px; height: 28px; padding: 0 10px;
-  font-family: var(--ui); font-stretch: 125%; font-weight: 800; font-size: 10px; text-transform: uppercase; letter-spacing: 0.06em;
-  background: var(--paper); color: var(--ink); border: 2px solid var(--ink);
-  transition: transform .4s cubic-bezier(.2,.8,.2,1);
-}
-.theme-toggle:hover { transform: translateY(-2px); }
-.theme-toggle__swatch { display: flex; }
-.theme-toggle__swatch i { width: 9px; height: 9px; border: 1px solid var(--ink); margin-left: -2px; }
-
 * { box-sizing: border-box; margin: 0; padding: 0; }
 html { background: var(--ink); color: var(--ink); -webkit-font-smoothing: antialiased; }
 html.is-locked, html.is-locked body { overflow: hidden; }
@@ -195,6 +155,8 @@ a { color: inherit; }
 .intro-title.is-in { opacity: 1; }
 .intro-title h1 { font-family: var(--display); font-weight: 400; font-size: clamp(64px, 13vw, 200px); line-height: 0.88; text-transform: uppercase; }
 .intro-title h1 span { display: block; }
+/* the title is printed by the hero shader (scenes/intro.js) at this element's exact position */
+.intro-title h1 { color: transparent; user-select: none; }
 .intro-title__kicker, .intro-title__hint { font-family: var(--ui); font-stretch: 125%; font-weight: 800; font-size: 11px; text-transform: uppercase; letter-spacing: 0.12em; }
 .intro-title__kicker { margin-bottom: 18px; color: var(--brass); }
 .intro-title__hint { margin-top: 28px; opacity: 0.7; }

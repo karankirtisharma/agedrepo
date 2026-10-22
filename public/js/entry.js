@@ -2,7 +2,7 @@
 // Picking one shrinks the whole screen into the real navbar pill (top right), then
 // starts the story, wipes to the portfolio, or glides to the contact section.
 import { reduceMotion } from "./ui.js";
-import { setSound, soundPreference, sfx } from "./audio.js";
+import { setSound, soundPreference } from "./audio.js";
 
 const $ = (s) => document.querySelector(s);
 
@@ -45,8 +45,6 @@ export function showEntry(lenis, actions) {
         const go = btn.dataset.go;
         entry.dataset.leaving = ""; // the story behind starts rendering again (see main.js)
         setSound(soundOn);
-        sfx("click");
-        sfx("swish");
         morphToNav(entry, btn, go).then(() => {
           entry.remove();
           lenis.start();

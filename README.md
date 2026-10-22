@@ -56,7 +56,7 @@ Visitors land on a full-screen menu (Story / Portfolio / Contact). Picking one s
 
 Sound is on by default. The entry screen has a Sound on/off pill, and picking an option is the click that lets the browser start audio. The bars button in the bottom right toggles it later, and the choice is remembered. With a deep link the entry screen is skipped, so sound waits for that button.
 
-Effects, ambience and music are all generated in the browser (`public/js/audio.js`), with no audio files. Each scene has an ambience mix and a pad chord in `SCENES`, and the scenes trigger one-shots from their `sound()` methods: doors, footsteps, pencil, paint notes, typing, press thunks, wind, user clicks and more. Dives whoosh and burst. `window.__audio.state()` in the console shows what's playing.
+All sounds are recorded effects in `public/sfx/` (about 1 MB, loaded only once sound is on), from free CC0 packs (Kenney, OpenGameArt) plus one CC-BY train recording. Sources and licenses are in `public/sfx/CREDITS.txt`, linked from the footer as the CC-BY license asks. `public/js/audio.js` maps each effect name to a sample, volume and pitch in `SHOTS`, and each scene's ambience mix (wind, train, city, conveyor) lives in `SCENES`. The scenes trigger effects from their `sound()` methods: doors, footsteps, pencil, paper drops, keys, press thunks, user clicks and more, and dives whoosh. To swap a sound, replace its mp3 with one of the same name. `window.__audio.state()` in the console shows what's loaded and playing.
 
 ## Colour themes
 

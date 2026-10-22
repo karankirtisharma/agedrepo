@@ -1,0 +1,16 @@
+Sound effects used on this site (trimmed, level-matched and converted to mp3)
+
+CC0 (public domain), no attribution required:
+- Kenney (www.kenney.nl): Interface Sounds, Impact Sounds, UI Audio, RPG Audio, Sci-Fi Sounds
+  click, caption, rise, pencil-*, pop-*, note, chime, success, key-*, user, snap-*, thunk-*, step-*,
+  carpet-*, burst, gear-*, door-open, door-close, boost, conveyor
+- qubodup (Iwan Gabovitch), "Swish - bamboo stick weapon swhoshes", opengameart.org/node/2242
+  swish-*, dive-*
+- SketchMan3, "wind whoosh loop", opengameart.org/content/wind-whoosh-loop
+  wind
+- TinyWorlds, "Scifi City - Ambient Loop", opengameart.org/node/82668
+  city
+
+CC-BY 3.0 (creativecommons.org/licenses/by/3.0/):
+- gryc, "Background Rumble Noise", opengameart.org/content/background-rumble-noise
+  train (cut to 4-25 s and loop-crossfaded)

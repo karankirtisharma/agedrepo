@@ -21,7 +21,7 @@ export function showEntry(lenis, actions) {
   document.querySelector(".site-header").classList.remove("is-hidden");
 
   if (!reduceMotion) {
-    gsap.from(".entry__word", { yPercent: 110, duration: 1.2, ease: "expo.out", stagger: 0.08 });
+    gsap.from(".entry__word", { yPercent: 110, duration: 1.2, ease: "expo.out", stagger: 0.08, clearProps: "transform" });
     gsap.from(".entry__num, .entry__hint, .entry__kicker, .entry__tag", { autoAlpha: 0, y: 10, duration: 0.8, ease: "power3.out", stagger: 0.04, delay: 0.3 });
   }
   entry.querySelector(".entry__nav button").focus({ preventScroll: true });
@@ -43,6 +43,7 @@ export function showEntry(lenis, actions) {
     entry.querySelectorAll("[data-go]").forEach((btn) =>
       btn.addEventListener("click", () => {
         const go = btn.dataset.go;
+        entry.dataset.leaving = ""; // the story behind starts rendering again (see main.js)
         setSound(soundOn);
         sfx("click");
         sfx("swish");

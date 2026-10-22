@@ -362,7 +362,7 @@ export class ScaleScene extends StoryScene {
   sound(p, prev, dt) {
     // cards dealing out flutter; every user who arrives clicks; the hero click lands the chord
     const v = Math.abs(range(p, 0.04, 0.72) - range(prev, 0.04, 0.72)) / Math.max(dt, 1e-3);
-    audio.rate("pencil", Math.min(30, v * 120));
+    audio.rate("pencil", Math.min(12, v * 60));
     let arrivals = 0;
     for (const u of this.userData) if (crossed(prev, p, u.arrive)) arrivals++;
     for (let i = 0; i < Math.min(3, arrivals); i++) sfx("user");

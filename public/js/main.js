@@ -146,12 +146,19 @@ async function boot() {
   }
 
   // one clock for everything: Lenis, the story canvas and the 3D views
-  let last = 0;
+  // while the entry screen fully covers the page, the story isn't drawn (keeps its entrance smooth)
+  // (one frame is still drawn up front so its shaders are compiled before the entry morphs away)
+  const entry = $("#entry");
+  const covered = () => entry?.isConnected && !entry.hidden && !("leaving" in entry.dataset);
+  let last = 0, warmed = false;
   gsap.ticker.add((time) => {
     const dt = Math.min(0.05, time - last || 0.016);
     last = time;
     lenis.raf(time * 1000);
-    story.frame(lenis.scroll, dt, time);
+    if (!covered() || !warmed) {
+      story.frame(lenis.scroll, dt, time);
+      warmed = true;
+    }
     stage.frame(dt, time);
     audio.tick(dt);
   });

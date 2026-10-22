@@ -155,7 +155,8 @@ export class ArrivalScene extends StoryScene {
     this.cam.lookAt(0, 1.4, -2);
   }
   sound(p, prev) {
-    if (crossed(prev, p, 0.05) || crossed(p, prev, 0.3)) sfx("door"); // opens, or closes when scrolling back
+    if (crossed(prev, p, 0.05)) sfx("door");
+    if (crossed(p, prev, 0.3)) sfx("doorClose"); // scrolling back shuts them again
     const steps = Math.floor(this.step * 4);
     if (steps !== this.lastStep && this.lastStep !== undefined && this.step > 0 && this.step < 1) sfx("step");
     this.lastStep = steps;
@@ -241,11 +242,11 @@ export class WorkshopScene extends StoryScene {
   }
   sound(p, prev, dt) {
     const v = Math.abs(p - prev) / Math.max(dt, 1e-3);
-    // the carriage rumbles harder and the rail joints clack faster as you move down it
-    audio.bed("rumble", 0.8 + Math.min(1, v * 2) * 0.6);
-    audio.rate("clack", Math.min(3, v * 8));
+    // the carriage rumbles louder and faster as you move down it; footsteps on the carpet
+    const move = Math.min(1, v * 2);
+    audio.bed("train", 0.8 + move * 0.5, 1 + move * 0.15);
     const steps = Math.floor(this.walk * 14);
-    if (steps !== this.lastStep && this.lastStep !== undefined && this.walk > 0 && this.walk < 1) sfx("step");
+    if (steps !== this.lastStep && this.lastStep !== undefined && this.walk > 0 && this.walk < 1) sfx("carpet");
     this.lastStep = steps;
     if (crossed(prev, p, 0.62)) sfx("swish"); // tools close-up panel
     if (crossed(prev, p, 0.9)) sfx("chime");

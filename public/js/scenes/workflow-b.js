@@ -405,7 +405,7 @@ export class AutomateScene extends StoryScene {
   sound() {
     // the machine runs louder and faster while you hold: belt hum, gear teeth, a thunk per stamp
     const fast = (this.speed - 1) / 2.2;
-    audio.bed("conveyor", 0.8 + fast * 0.7);
+    audio.bed("conveyor", 0.8 + fast * 0.7, 1 + fast * 0.35);
     audio.rate("clank", this.speed * 2.6);
     audio.boost(fast * 0.5);
     if (crossed(this.soundSlam ?? 1, this.slam, 0.85)) sfx("thunk");

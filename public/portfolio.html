@@ -1,0 +1,116 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Portfolio · Ruddix Studio</title>
+<meta name="description" content="Selected work from Ruddix Studio: creative websites, SaaS products and automations, plus a library of 50+ live demos.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..800&family=Limelight&family=Manrope:wght@300;400&display=swap" rel="stylesheet">
+<script>
+  // apply the saved theme before first paint (default: blueprint)
+  (function () {
+    var t = new URLSearchParams(location.search).get("theme");
+    try { t = t || localStorage.getItem("ruddix-theme"); } catch (e) {}
+    document.documentElement.dataset.theme = t === "crimson" ? "crimson" : "blueprint";
+  })();
+</script>
+<link rel="stylesheet" href="css/style.css">
+<script type="importmap">
+{ "imports": {
+  "three": "https://cdn.jsdelivr.net/npm/three@0.169.0/build/three.module.js",
+  "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.169.0/examples/jsm/"
+} }
+</script>
+</head>
+<body data-page="portfolio" class="page-portfolio">
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="emblem" viewBox="0 0 64 64">
+    <circle cx="32" cy="32" r="30" fill="none" stroke="currentColor" stroke-width="2"/>
+    <circle cx="32" cy="32" r="25" fill="none" stroke="currentColor" stroke-width="1" stroke-dasharray="2 3"/>
+    <path d="M22 46V18h12a8 8 0 0 1 0 16h-6l12 12" fill="none" stroke="currentColor" stroke-width="4" stroke-linejoin="round" stroke-linecap="round"/>
+    <circle cx="44" cy="20" r="2.5" fill="currentColor"/>
+  </symbol>
+</svg>
+
+<div id="loader" class="loader" aria-live="polite">
+  <svg viewBox="0 0 64 64" aria-hidden="true"><use href="#emblem"/></svg>
+  <span id="loader-pct">0%</span>
+</div>
+<div class="wipe" aria-hidden="true"><span></span><span></span><span></span><span></span><span></span><span></span></div>
+
+<header class="site-header">
+  <a class="logo" href="index.html" data-wipe aria-label="Ruddix Studio home">
+    <svg viewBox="0 0 64 64" aria-hidden="true"><use href="#emblem"/></svg>
+    <span class="logo__word"><span data-brand="name">Ruddix</span><small data-brand="sub">Studio</small></span>
+  </a>
+  <nav class="pill" aria-label="Main">
+    <a href="index.html" data-wipe>Home</a>
+    <svg class="pill__icon" viewBox="0 0 64 64" aria-hidden="true"><use href="#emblem"/></svg>
+    <a href="portfolio.html" aria-current="page">Portfolio</a>
+    <a href="index.html#contact" data-wipe>Contact</a>
+  </nav>
+</header>
+
+<main class="pf">
+  <section class="pf-hero">
+    <p class="label pf-hero__kicker" data-reveal>Portfolio · <span data-brand="name"></span> <span data-brand="sub"></span></p>
+    <h1 class="pf-hero__title" data-reveal="lines"><span>Selected</span><span>work</span></h1>
+    <p class="pf-hero__lede" data-reveal>Four builds we're proud of, across creative web, SaaS and automation. Want to see more? The library below holds <span data-brand="demoCount"></span> live demos.</p>
+  </section>
+
+  <section class="pf-grid" id="pf-grid" aria-label="Featured projects"></section>
+
+  <section class="pf-library">
+    <a id="pf-notion" class="library" href="#" target="_blank" rel="noopener">
+      <div class="library__view" data-view="icon:laptop" aria-hidden="true"></div>
+      <div class="library__copy">
+        <p class="label library__kicker">The library</p>
+        <h2 class="library__title"><span><span data-brand="demoCount"></span> more</span><span>live demos</span></h2>
+        <p class="library__text">Landing pages, WebGL experiments, dashboards and automations, all in one Notion page.</p>
+        <span class="btn-solid library__btn">Open on Notion &nearr;</span>
+      </div>
+    </a>
+  </section>
+
+  <section class="contact" aria-labelledby="pf-contact-title">
+    <p class="label contact__kicker" data-reveal>Your project could be number five</p>
+    <h2 id="pf-contact-title" class="contact__title" data-reveal="lines"><span>Let's build</span><span>yours</span></h2>
+    <div class="contact__actions" data-reveal>
+      <a id="pf-book" class="btn-solid" href="#" target="_blank" rel="noopener">Book a call</a>
+      <a class="btn-line" data-link="email" href="#"></a>
+    </div>
+  </section>
+</main>
+
+<footer class="footer">
+  <div class="footer__brand">
+    <svg viewBox="0 0 64 64" aria-hidden="true"><use href="#emblem"/></svg>
+    <span class="logo__word"><span data-brand="name"></span><small data-brand="sub"></small></span>
+  </div>
+  <div class="footer__links">
+    <a class="label" data-link="instagram" href="#" target="_blank" rel="noopener">Instagram</a>
+    <a class="label" data-link="linkedin" href="#" target="_blank" rel="noopener">LinkedIn</a>
+    <a class="label" data-link="x" href="#" target="_blank" rel="noopener">X</a>
+    <a class="footer__email" data-link="email" href="#"></a>
+  </div>
+  <div class="footer__base">
+    <p data-brand="tagline"></p>
+    <a href="#legal">Legal</a>
+  </div>
+</footer>
+
+<button id="theme-toggle" class="theme-toggle" type="button" aria-label="Switch colour theme">
+  <span class="theme-toggle__swatch" aria-hidden="true"><i style="background:var(--ink)"></i><i style="background:var(--red)"></i><i style="background:var(--brass)"></i></span>
+  <span class="theme-toggle__label"></span>
+</button>
+<canvas id="stage-canvas" class="stage-canvas" aria-hidden="true"></canvas>
+
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/gsap.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/ScrollTrigger.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/lenis@1.1.13/dist/lenis.min.js"></script>
+<script type="module" src="js/portfolio.js"></script>
+</body>
+</html>

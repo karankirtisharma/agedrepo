@@ -1,0 +1,201 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Ruddix Studio</title>
+<meta name="description" content="Ruddix Studio: creative web development, automation and SaaS. Websites people remember. Systems that run themselves.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..800&family=Limelight&family=Manrope:wght@300;400&display=swap" rel="stylesheet">
+<script>
+  // apply the saved theme before first paint (default: blueprint)
+  (function () {
+    var t = new URLSearchParams(location.search).get("theme");
+    try { t = t || localStorage.getItem("ruddix-theme"); } catch (e) {}
+    document.documentElement.dataset.theme = t === "crimson" ? "crimson" : "blueprint";
+  })();
+</script>
+<link rel="stylesheet" href="css/style.css">
+<script type="importmap">
+{ "imports": {
+  "three": "https://cdn.jsdelivr.net/npm/three@0.169.0/build/three.module.js",
+  "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.169.0/examples/jsm/"
+} }
+</script>
+</head>
+<body data-page="home">
+
+<!-- Shared SVG symbols: placeholder Ruddix mark (swap for the real logo later) -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="emblem" viewBox="0 0 64 64">
+    <circle cx="32" cy="32" r="30" fill="none" stroke="currentColor" stroke-width="2"/>
+    <circle cx="32" cy="32" r="25" fill="none" stroke="currentColor" stroke-width="1" stroke-dasharray="2 3"/>
+    <path d="M22 46V18h12a8 8 0 0 1 0 16h-6l12 12" fill="none" stroke="currentColor" stroke-width="4" stroke-linejoin="round" stroke-linecap="round"/>
+    <circle cx="44" cy="20" r="2.5" fill="currentColor"/>
+  </symbol>
+  <symbol id="emblem-tall" viewBox="0 0 24 48">
+    <path d="M12 2v44M6 8h12M6 40h12" stroke="currentColor" stroke-width="2" fill="none"/>
+    <path d="M8 31V17h5a3.5 3.5 0 0 1 0 7h-2l5 7" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
+  </symbol>
+</svg>
+
+<!-- Loader -->
+<div id="loader" class="loader" aria-live="polite">
+  <svg viewBox="0 0 64 64" aria-hidden="true"><use href="#emblem"/></svg>
+  <span id="loader-pct">0%</span>
+</div>
+
+<!-- Page transition: columns wipe across when moving between pages -->
+<div class="wipe" aria-hidden="true"><span></span><span></span><span></span><span></span><span></span><span></span></div>
+
+<!-- Entry screen: a giant version of the nav pill. Picking an option shrinks it into the navbar. -->
+<div id="entry" class="entry" hidden role="dialog" aria-modal="true" aria-labelledby="entry-title">
+  <div class="entry__panel">
+    <p id="entry-title" class="entry__kicker label"><span data-brand="name">Ruddix</span> <span data-brand="sub">Studio</span> · <span data-brand="kicker"></span></p>
+    <nav class="entry__nav" aria-label="Where to start">
+      <button type="button" data-go="story">
+        <span class="entry__num label">01</span>
+        <span class="entry__mask"><span class="entry__word">Story</span></span>
+        <span class="entry__hint">Six scenes, from scribble to scale</span>
+      </button>
+      <button type="button" data-go="portfolio">
+        <span class="entry__num label">02</span>
+        <span class="entry__mask"><span class="entry__word">Portfolio</span></span>
+        <span class="entry__hint">Four builds and <span data-brand="demoCount"></span> live demos</span>
+      </button>
+      <button type="button" data-go="contact">
+        <span class="entry__num label">03</span>
+        <span class="entry__mask"><span class="entry__word">Contact</span></span>
+        <span class="entry__hint">Start a project</span>
+      </button>
+    </nav>
+    <div class="entry__foot">
+      <p class="entry__tag" data-brand="tagline"></p>
+      <button class="entry__sound" type="button" aria-pressed="true">Sound <span>on</span></button>
+    </div>
+    <!-- matches the navbar pill, fades in as the panel lands on it -->
+    <div class="entry__mini" aria-hidden="true">
+      <span>Story</span>
+      <svg viewBox="0 0 64 64"><use href="#emblem"/></svg>
+      <span>Portfolio</span>
+      <span>Contact</span>
+    </div>
+  </div>
+</div>
+
+<!-- Header -->
+<header class="site-header">
+  <a id="nav-home" class="logo" href="index.html" aria-label="Ruddix Studio, back to top">
+    <svg viewBox="0 0 64 64" aria-hidden="true"><use href="#emblem"/></svg>
+    <span class="logo__word"><span data-brand="name">Ruddix</span><small data-brand="sub">Studio</small></span>
+  </a>
+  <nav class="pill" aria-label="Main">
+    <button id="nav-story" type="button">Story</button>
+    <svg class="pill__icon" viewBox="0 0 64 64" aria-hidden="true"><use href="#emblem"/></svg>
+    <a href="portfolio.html" data-wipe>Portfolio</a>
+    <button id="nav-contact" type="button">Contact</button>
+  </nav>
+</header>
+<button id="sound" class="sound" type="button" aria-pressed="false" aria-label="Sound">
+  <span></span><span></span><span></span><span></span>
+</button>
+
+<!-- Story layers (fixed) -->
+<canvas id="story-canvas" class="story-canvas" aria-hidden="true"></canvas>
+<div id="panel-layer" class="panel-layer" aria-hidden="true"></div>
+<div id="intro-title" class="intro-title">
+  <p class="intro-title__kicker" data-brand="kicker">Creative web · Automation · SaaS</p>
+  <h1><span data-brand="name">Ruddix</span><span data-brand="sub">Studio</span></h1>
+  <p class="intro-title__tag" data-brand="tagline"></p>
+  <p class="intro-title__hint">Scroll to begin</p>
+</div>
+<div id="caption-layer" class="caption-layer" aria-live="polite"></div>
+<div id="metrics" class="metrics" aria-hidden="true"></div>
+<div id="saved" class="metrics metrics--left" aria-hidden="true"></div>
+<p id="step" class="step" aria-live="polite"></p>
+<button id="hold" class="hold" type="button" aria-hidden="true" tabindex="-1"><span class="hold__label">Hold</span></button>
+<div id="flash" class="flash" aria-hidden="true"></div>
+
+<main>
+  <section id="story" class="story" aria-label="Story"></section>
+
+  <!-- Manifesto -->
+  <section id="manifesto" class="products">
+    <h2 id="m-headline" class="products__headline" data-reveal="lines"></h2>
+    <div class="products__cols" data-reveal>
+      <p id="m-left" class="label"></p>
+      <p id="m-right" class="label"></p>
+    </div>
+    <p id="m-center" class="label products__center" data-reveal></p>
+    <p id="m-body" class="products__body" data-reveal></p>
+  </section>
+
+  <!-- Services -->
+  <section id="services" class="collection" aria-labelledby="services-title">
+    <h2 id="services-title" class="collection__title" data-reveal="lines"><span>What we</span><span>build</span></h2>
+    <div id="services-grid" class="collection__grid"></div>
+    <p id="services-extra" class="services__extra" data-reveal></p>
+  </section>
+
+  <!-- Process -->
+  <section id="process" class="drinks" aria-roledescription="carousel" aria-label="How we work">
+    <div class="drinks__viewport" data-clip>
+      <div id="process-track" class="drinks__track"></div>
+    </div>
+    <div class="drinks__controls">
+      <button id="process-prev" class="arrow" type="button" aria-label="Previous step">&larr;</button>
+      <div id="process-dots" class="dots"></div>
+      <button id="process-next" class="arrow" type="button" aria-label="Next step">&rarr;</button>
+    </div>
+  </section>
+
+  <!-- Portfolio teaser -->
+  <section class="retail" aria-labelledby="work-title">
+    <svg class="retail__icon" viewBox="0 0 24 48" aria-hidden="true"><use href="#emblem-tall"/></svg>
+    <p class="label label--red retail__side retail__side--l">Selected<br>work</p>
+    <h2 id="work-title" class="retail__title" data-reveal="lines"><span>Four builds</span><span>we're proud of</span></h2>
+    <p class="label label--red retail__side retail__side--r"><span data-brand="demoCount"></span> demos<br>in the library</p>
+    <a class="btn-solid retail__cta" href="portfolio.html" data-wipe data-reveal>See the portfolio &rarr;</a>
+  </section>
+
+  <!-- Contact -->
+  <section id="contact" class="contact" aria-labelledby="contact-title">
+    <p class="label contact__kicker" data-reveal>It's 11:58 somewhere</p>
+    <h2 id="contact-title" class="contact__title" data-reveal="lines"><span>Got something</span><span>to launch?</span></h2>
+    <div class="contact__actions" data-reveal>
+      <a id="contact-book" class="btn-solid" href="#" target="_blank" rel="noopener">Book a call</a>
+      <a id="contact-email" class="btn-line" href="#"></a>
+    </div>
+  </section>
+</main>
+
+<footer class="footer">
+  <div class="footer__brand">
+    <svg viewBox="0 0 64 64" aria-hidden="true"><use href="#emblem"/></svg>
+    <span class="logo__word"><span data-brand="name"></span><small data-brand="sub"></small></span>
+  </div>
+  <div class="footer__links">
+    <a class="label" data-link="instagram" href="#" target="_blank" rel="noopener">Instagram</a>
+    <a class="label" data-link="linkedin" href="#" target="_blank" rel="noopener">LinkedIn</a>
+    <a class="label" data-link="x" href="#" target="_blank" rel="noopener">X</a>
+    <a class="footer__email" data-link="email" href="#"></a>
+  </div>
+  <div class="footer__base">
+    <p data-brand="tagline"></p>
+    <a href="#legal">Legal</a>
+  </div>
+</footer>
+
+<button id="theme-toggle" class="theme-toggle" type="button" aria-label="Switch colour theme">
+  <span class="theme-toggle__swatch" aria-hidden="true"><i style="background:var(--ink)"></i><i style="background:var(--red)"></i><i style="background:var(--brass)"></i></span>
+  <span class="theme-toggle__label"></span>
+</button>
+<canvas id="stage-canvas" class="stage-canvas" aria-hidden="true"></canvas>
+
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/gsap.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/ScrollTrigger.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/lenis@1.1.13/dist/lenis.min.js"></script>
+<script type="module" src="js/main.js"></script>
+</body>
+</html>

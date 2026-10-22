@@ -1,0 +1,9 @@
+# textures taken from a reference site during development; not used, not ours to publish
+public/placeholder/
+
+__pycache__/
+.venv*/
+*.blend1
+.vercel/
+.DS_Store
+Thumbs.db

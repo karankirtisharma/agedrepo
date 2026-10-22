@@ -68,7 +68,23 @@ export function setupReveals(root = document) {
 export function setupSectionPanels(selector) {
   const { gsap } = window;
   if (reduceMotion) return;
-  document.querySelectorAll(selector).forEach((el) => {
+  const els = [...document.querySelectorAll(selector)];
+  // what the inset uncovers is the colour of the section above (not the page's ink), so a panel
+  // opens over matching colour with no black gutter. Colours are read before any wrapping.
+  const under = els.map((el) => {
+    const prev = el.previousElementSibling;
+    const c = prev ? getComputedStyle(prev).backgroundColor : "";
+    return c && c !== "transparent" && c !== "rgba(0, 0, 0, 0)" ? c : null;
+  });
+  els.forEach((el, i) => {
+    if (!under[i]) return;
+    const wrap = document.createElement("div");
+    wrap.className = "panel-under";
+    wrap.style.backgroundColor = under[i];
+    el.before(wrap);
+    wrap.appendChild(el);
+  });
+  els.forEach((el) => {
     el.dataset.clip = "";
     const st = { t: 0 };
     const apply = () => {

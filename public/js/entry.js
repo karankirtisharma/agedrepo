@@ -56,7 +56,11 @@ export function showEntry(lenis, actions) {
   });
 }
 
-/** Shrink the full-screen panel into the header pill, swapping big labels for the small nav row. */
+/**
+ * Shrink the full-screen panel into the header pill. The menu empties first, the bare panel
+ * flies onto the pill and takes its exact box (padding 0, 2px border), and only then the real
+ * pill appears underneath and the panel fades off it, so the hand-over is invisible.
+ */
 function morphToNav(entry, picked, go) {
   const { gsap } = window;
   const panel = entry.querySelector(".entry__panel");
@@ -66,24 +70,35 @@ function morphToNav(entry, picked, go) {
 
   const to = pill.getBoundingClientRect();
   const from = panel.getBoundingClientRect();
-  const others = [...entry.querySelectorAll("[data-go]")].filter((b) => b !== picked);
   return new Promise((done) => {
     // the panel is sized by `inset`; free its right/bottom edges so width/height can animate
-    gsap.set(panel, { left: from.left, top: from.top, width: from.width, height: from.height, right: "auto", bottom: "auto" });
-    const tl = gsap.timeline({ onComplete: done });
+    gsap.set(panel, { left: from.left, top: from.top, width: from.width, height: from.height, right: "auto", bottom: "auto", autoRound: false });
+    gsap.set(pill, { autoAlpha: 0 }); // the real pill waits under the landing spot
+    const tl = gsap.timeline({
+      onComplete: () => {
+        gsap.set(pill, { clearProps: "opacity,visibility" });
+        done();
+      },
+    });
     window.__entryTl = tl; // debug handle (scrub the morph from the console)
-    tl.to(picked, { backgroundColor: "var(--ink)", color: "var(--paper)", duration: 0.25, ease: "power2.out" })
-      .to(others, { autoAlpha: 0.15, duration: 0.25 }, "<")
-      .to(".entry__kicker, .entry__foot, .entry__hint, .entry__num", { autoAlpha: 0, duration: 0.25 }, "<")
-      .to(entry, { backgroundColor: "rgba(0,0,0,0)", duration: 0.5 }, "<0.15")
-      // the big words drop away as the panel shrinks
-      .to(".entry__word", { yPercent: -110, autoAlpha: 0, duration: 0.4, ease: "power3.in", stagger: 0.03 }, "<0.05")
-      // the panel flies up to the navbar and becomes it
+    tl.to(picked, { backgroundColor: "var(--ink)", color: "var(--paper)", duration: 0.2, ease: "power2.out" })
+      // the menu empties: words drop, everything else (the picked highlight too) fades out
+      .to(".entry__word", { yPercent: -110, duration: 0.45, ease: "power3.in", stagger: 0.04 }, "+=0.05")
+      .to(".entry__kicker, .entry__foot, .entry__hint, .entry__num", { autoAlpha: 0, duration: 0.3 }, "<")
+      .to(".entry__nav", { autoAlpha: 0, duration: 0.35 }, "<0.15")
+      .to(entry, { backgroundColor: "rgba(0,0,0,0)", duration: 0.7, ease: "power2.inOut" }, "<")
+      // the bare panel flies up and takes the pill's exact box
       .fromTo(panel,
         { left: from.left, top: from.top, width: from.width, height: from.height },
-        { left: to.left, top: to.top, width: to.width, height: to.height, borderWidth: 2, duration: 1.0, ease: "expo.inOut" }, "<0.15")
-      .to(".entry__mini", { autoAlpha: 1, duration: 0.3 }, "-=0.35")
-      .to(entry, { autoAlpha: 0, duration: 0.25 })
-      .fromTo(navTarget, { backgroundColor: "var(--ink)", color: "var(--paper)" }, { backgroundColor: "rgba(0,0,0,0)", color: "var(--ink)", duration: 0.8, clearProps: "backgroundColor,color" }, "<");
+        { left: to.left, top: to.top, width: to.width, height: to.height, borderWidth: 2, padding: 0, duration: 1.05, ease: "expo.inOut", autoRound: false }, "<0.1")
+      // landed: snap to the pill's live box (sub-pixel layout shifts), show the real pill beneath
+      // and fade the panel off it, so the labels seem to ink in
+      .add(() => {
+        const b = pill.getBoundingClientRect();
+        gsap.set(panel, { left: b.left, top: b.top, width: b.width, height: b.height, autoRound: false });
+      })
+      .set(pill, { autoAlpha: 1 })
+      .to(entry, { autoAlpha: 0, duration: 0.45, ease: "power1.out" })
+      .fromTo(navTarget, { backgroundColor: "var(--ink)", color: "var(--paper)" }, { backgroundColor: "rgba(0,0,0,0)", color: "var(--ink)", duration: 0.9, delay: 0.15, clearProps: "backgroundColor,color" }, "<");
   });
 }

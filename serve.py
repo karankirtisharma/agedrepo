@@ -10,6 +10,13 @@ import sys
 
 
 class NoCacheHandler(http.server.SimpleHTTPRequestHandler):
+    def translate_path(self, path):
+        # clean URLs like production (Vercel cleanUrls): /portfolio serves portfolio.html
+        full = super().translate_path(path)
+        if not os.path.exists(full) and os.path.exists(full + ".html"):
+            return full + ".html"
+        return full
+
     def end_headers(self):
         self.send_header("Cache-Control", "no-store, must-revalidate")
         self.send_header("Expires", "0")

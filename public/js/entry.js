@@ -65,7 +65,7 @@ function morphToNav(entry, picked, go) {
   const { gsap } = window;
   const panel = entry.querySelector(".entry__panel");
   const pill = $(".site-header .pill");
-  const navTarget = { story: "#nav-story", portfolio: '.pill a[href="portfolio.html"]', contact: "#nav-contact" }[go];
+  const navTarget = { story: "#nav-story", portfolio: '.pill a[href="/portfolio"]', contact: "#nav-contact" }[go];
   if (reduceMotion) return Promise.resolve();
 
   const to = pill.getBoundingClientRect();

@@ -39,10 +39,12 @@ function card(d) {
  */
 export async function setupDemos(root, { pageSize = 6, first = pageSize } = {}) {
   const list = await (await fetch("demos/demos.json")).json();
-  const cats = ["All", ...new Set(list.map((d) => d.category))];
+  // biggest groups first
+  const size = (g) => list.filter((d) => d.group === g).length;
+  const cats = ["All", ...[...new Set(list.map((d) => d.group))].sort((x, y) => size(y) - size(x))];
   // "All" deals the categories out in turn (restaurant, cafe, pizza, gym, restaurant...) so the
   // first screen shows every kind of business, not six restaurants in a row
-  const byCat = cats.slice(1).map((c) => list.filter((d) => d.category === c));
+  const byCat = cats.slice(1).map((c) => list.filter((d) => d.group === c));
   const demos = [];
   for (let i = 0; demos.length < list.length; i++) byCat.forEach((g) => g[i] && demos.push(g[i]));
   const chips = root.querySelector(".demos__chips");
@@ -53,13 +55,13 @@ export async function setupDemos(root, { pageSize = 6, first = pageSize } = {}) 
 
   chips.innerHTML = cats
     .map((c) => {
-      const n = c === "All" ? demos.length : demos.filter((d) => d.category === c).length;
+      const n = c === "All" ? demos.length : demos.filter((d) => d.group === c).length;
       return `<button type="button" class="chip" data-cat="${c}" aria-pressed="${c === cat}">${c} <span class="chip__n">${n}</span></button>`;
     })
     .join("");
 
   const render = (fromIndex = 0) => {
-    const list = cat === "All" ? demos : demos.filter((d) => d.category === cat);
+    const list = cat === "All" ? demos : demos.filter((d) => d.group === cat);
     const visible = list.slice(0, shown);
     grid.innerHTML = visible.map(card).join("");
     const what = cat === "All" ? "designs" : `${cat} designs`;

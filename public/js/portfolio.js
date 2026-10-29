@@ -42,8 +42,8 @@ async function boot() {
   setupSectionPanels(".pf .contact");
   autoHideHeader(lenis);
   $("#loader").classList.add("is-done");
-  // demo library: one featured design plus two full rows of three, then six more per click
-  await setupDemos($("#demos"), { first: 7, pageSize: 6 });
+  // demo library: one featured design plus two full rows of three, then twelve more per click
+  await setupDemos($("#demos"), { first: 7, pageSize: 12 });
   lenis.resize();
   window.ScrollTrigger?.refresh();
 

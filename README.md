@@ -14,6 +14,8 @@ Open http://localhost:5181 (no build step; Three.js, GSAP and Lenis load from js
 
 ## Deploy (Vercel)
 
+Pages use clean addresses (`/portfolio`, not `/portfolio.html`): `vercel.json` sets `cleanUrls`, and `serve.py` does the same locally.
+
 Import the GitHub repo in Vercel and deploy with the defaults. `vercel.json` tells it there is no build or install step and to serve `public/` as a static site.
 
 ## Edit content
@@ -54,10 +56,10 @@ Visitors land on a full-screen menu (Story / Portfolio / Contact). Picking one s
 
 ## Demo library (Portfolio page)
 
-The "Pick a design you like" section lists ready-made demo sites with category filters, a screenshot of each, "I want this design" (opens a pre-filled email to the studio) and "View live site". It opens with one featured design plus two rows, mixing the business types, then "Show more" adds 6 at a time.
+The "Pick a design you like" section lists ready-made demo sites with filters, a screenshot of each, "I want this design" (opens a pre-filled email to the studio) and "View live site". It opens with one featured design plus two rows, mixing the business types, then "Show more" adds 12 at a time. The ~48 niches are grouped into 10 simple filter chips (Home Services, Health & Fitness, Food & Drink...); each card still shows its exact niche.
 
-- The list is `public/demos/demos.json`: one line per demo with `id`, `name`, `category` and `url`. A new category gets its own filter chip automatically.
-- Screenshots: `node tools/shoot_demos.mjs` captures any demo that has no thumbnail yet with the installed Chrome (`--all` re-shoots everything, or pass an id). If a demo is caught mid-animation, add `"wait": 2500` (milliseconds) to its line and re-shoot it.
+- **The list** is `tools/notion_list.txt` (a niche line, then its URLs, copied from the Notion page). `python tools/build_demos.py` turns it into `public/demos/demos.json`, naming each demo from its page title and sorting niches into chip groups (`GROUPS` in the script). It also holds `SKIP` (listed demos whose site returns 404) and `WAITS` (slow intros).
+- **Screenshots:** `node tools/shoot_demos.mjs` captures any demo with no thumbnail yet using the installed Chrome (`--all` re-shoots everything, or pass an id). If a demo is caught mid-animation, add it to `WAITS` in `build_demos.py` and re-shoot it.
 - Code: `public/js/demos.js`, styles under "Demo library" in `css/style.css`.
 
 ## Sound

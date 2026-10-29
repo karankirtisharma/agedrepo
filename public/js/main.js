@@ -109,7 +109,7 @@ async function boot() {
   // entry screen: Story / Portfolio / Contact, morphing into the navbar once picked
   showEntry(lenis, {
     story: () => lenis.scrollTo(0, { immediate: true }),
-    portfolio: () => document.querySelector('.pill a[href="portfolio.html"]').click(),
+    portfolio: () => document.querySelector('.pill a[href="/portfolio"]').click(),
     contact: () => lenis.scrollTo("#contact", { duration: 2.6 }),
   });
   if (!reduceMotion) {

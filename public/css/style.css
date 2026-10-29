@@ -332,13 +332,13 @@ a { color: inherit; }
 .pf > * { position: relative; z-index: 2; }
 /* project art sits under the 3D canvas so its objects draw on top */
 .pf > .pf-grid { z-index: auto; }
-.pf-hero { padding: 22vh var(--gutter) 8vh; max-width: 1400px; margin: 0 auto; }
+.pf-hero { padding: 6vh var(--gutter) 8vh; max-width: 1400px; margin: 0 auto; }
 .pf-hero__kicker { color: var(--red); margin-bottom: 18px; }
 .pf-hero__title { font-family: var(--display); font-weight: 400; font-size: clamp(64px, 14vw, 230px); line-height: 0.86; text-transform: uppercase; }
 .pf-hero__title span { display: block; }
 .pf-hero__lede { max-width: 46ch; margin-top: 28px; font-size: 17px; line-height: 1.5; }
 
-.pf-grid { display: grid; grid-template-columns: 1fr 1fr; gap: clamp(16px, 2.4vw, 36px); padding: 0 var(--gutter); max-width: 1400px; margin: 0 auto; }
+.pf-grid { display: grid; grid-template-columns: 1fr 1fr; gap: clamp(16px, 2.4vw, 36px); padding: 0 var(--gutter) 14vh; max-width: 1400px; margin: 0 auto; }
 .project {
   position: relative; z-index: auto; display: grid; grid-template-rows: auto 1fr; text-decoration: none; color: var(--ink);
   border: 3px solid var(--ink); background: var(--paper);
@@ -365,6 +365,7 @@ a { color: inherit; }
 /* ---------- Demo library (Portfolio): mobile first, large type and tap targets ---------- */
 .sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
 .demos { padding: 12vh var(--gutter) 14vh; max-width: 1400px; margin: 0 auto; color: var(--ink); }
+.pf > .demos:first-child { padding-top: 22vh; } /* opening the page: clear the fixed header */
 .demos__head { display: grid; gap: 18px; }
 .demos__kicker { color: var(--red); font-size: 13px; }
 .demos__title { font-family: var(--display); font-weight: 400; font-size: clamp(44px, 7vw, 104px); line-height: 0.92; text-transform: uppercase; }

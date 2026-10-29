@@ -52,6 +52,14 @@ The logo is a placeholder SVG `<symbol id="emblem">` in `index.html` and `portfo
 
 Visitors land on a full-screen menu (Story / Portfolio / Contact). Picking one shrinks the whole screen into the navbar pill in the top right, then starts the story, wipes to the Portfolio page, or glides to Contact. It's skipped for deep links (`#contact`, `?at=`). Code: `public/js/entry.js`.
 
+## Demo library (Portfolio page)
+
+The "Pick a design you like" section lists ready-made demo sites with category filters, a screenshot of each, "I want this design" (opens a pre-filled email to the studio) and "View live site". It opens with one featured design plus two rows, mixing the business types, then "Show more" adds 6 at a time.
+
+- The list is `public/demos/demos.json`: one line per demo with `id`, `name`, `category` and `url`. A new category gets its own filter chip automatically.
+- Screenshots: `node tools/shoot_demos.mjs` captures any demo that has no thumbnail yet with the installed Chrome (`--all` re-shoots everything, or pass an id). If a demo is caught mid-animation, add `"wait": 2500` (milliseconds) to its line and re-shoot it.
+- Code: `public/js/demos.js`, styles under "Demo library" in `css/style.css`.
+
 ## Sound
 
 One background track, no sound effects: a calm CC0 piano piece (`public/music/theme.mp3`, credits in `public/music/CREDITS.txt`, linked from the footer). It loops quietly and is on by default. Browsers only allow audio after a click or key press, so it starts with the entry-screen pick (which has a Sound on/off pill) or the first click anywhere. The bars button in the bottom right mutes it, and the choice is remembered. Code: `public/js/audio.js`; to change the music, replace `theme.mp3`.

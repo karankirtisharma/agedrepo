@@ -55,16 +55,16 @@
 
   <section class="pf-grid" id="pf-grid" aria-label="Featured projects"></section>
 
-  <section class="pf-library">
-    <a id="pf-notion" class="library" href="#" target="_blank" rel="noopener">
-      <div class="library__view" data-view="icon:laptop" aria-hidden="true"></div>
-      <div class="library__copy">
-        <p class="label library__kicker">The library</p>
-        <h2 class="library__title"><span><span data-brand="demoCount"></span> more</span><span>live demos</span></h2>
-        <p class="library__text">Landing pages, WebGL experiments, dashboards and automations, all in one Notion page.</p>
-        <span class="btn-solid library__btn">Open on Notion &nearr;</span>
-      </div>
-    </a>
+  <section id="demos" class="demos demos--feature" aria-labelledby="demos-title">
+    <header class="demos__head">
+      <p class="label demos__kicker">Ready-made designs</p>
+      <h2 id="demos-title" class="demos__title"><span>Pick a design</span> <span>you like</span></h2>
+      <p class="demos__lede">Each one is a real, working website. Open it, click around, and if it feels right, tell us. We'll make it yours: your name, menu, photos and colors.</p>
+    </header>
+    <div class="demos__chips" role="group" aria-label="Filter by type of business"></div>
+    <p class="demos__count" aria-live="polite"></p>
+    <ul class="demos__grid"></ul>
+    <button type="button" class="btn-solid demos__more">Show more designs</button>
   </section>
 
   <section class="contact" aria-labelledby="pf-contact-title">

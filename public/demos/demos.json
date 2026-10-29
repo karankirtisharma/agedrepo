@@ -1,0 +1,18 @@
+[
+  { "id": "burger-joint", "name": "Burger Joint", "category": "Restaurant", "url": "https://restaurantdemosite.framer.website/" },
+  { "id": "restroo", "name": "Restroo Dining", "category": "Restaurant", "url": "https://restaurantdemo1.framer.website/" },
+  { "id": "veloria", "name": "Veloria", "category": "Restaurant", "url": "https://restaurantdemo2.framer.website/" },
+  { "id": "sofra", "name": "Sofra", "category": "Restaurant", "url": "https://restaurantdemo03.framer.website/" },
+  { "id": "sushi-bar", "name": "Sushi Bar", "category": "Restaurant", "url": "https://restaurantdemoshushi.framer.website/", "wait": 2500 },
+  { "id": "german-kitchen", "name": "German Kitchen", "category": "Restaurant", "url": "https://germanrestaurant.framer.website/" },
+  { "id": "bramble", "name": "Bramble", "category": "Restaurant", "url": "https://modernrestaurant01.framer.website/" },
+  { "id": "cafenza", "name": "Cafenza", "category": "Cafe", "url": "https://cafedemo1.framer.website/" },
+  { "id": "la-paloma", "name": "La Paloma", "category": "Cafe", "url": "https://cafedemo2.framer.website/" },
+  { "id": "latte", "name": "Latte", "category": "Cafe", "url": "https://cafedemosite.framer.website/" },
+  { "id": "kafoska", "name": "Kafoska", "category": "Cafe", "url": "https://cafe3ddemo.framer.website/" },
+  { "id": "mello", "name": "Mello", "category": "Cafe", "url": "https://coffedemosite.netlify.app/" },
+  { "id": "pepper", "name": "Pepper", "category": "Pizza", "url": "https://pizzademo1.framer.website/" },
+  { "id": "slice-town", "name": "Slice Town", "category": "Pizza", "url": "https://pizzademo2.framer.website/" },
+  { "id": "energize", "name": "Energize", "category": "Fitness & Gym", "url": "https://fitnesscenterdemo.framer.website/" },
+  { "id": "iron-house", "name": "Iron House Gym", "category": "Fitness & Gym", "url": "https://gymdemosite.framer.website/" }
+]

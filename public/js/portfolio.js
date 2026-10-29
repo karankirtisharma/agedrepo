@@ -1,8 +1,9 @@
 import { loadAssets } from "./assets.js";
 import { setInkTextures } from "./ink.js";
 import { Stage } from "./stage.js";
+import { setupDemos } from "./demos.js";
 import { BRAND, PROJECTS } from "./content.js";
-import { fillBrand, smoothScroll, setupReveals, setupWipe, autoHideHeader, setupSectionPanels, reduceMotion } from "./ui.js";
+import { fillBrand, smoothScroll, setupReveals, setupWipe, autoHideHeader, setupSectionPanels } from "./ui.js";
 const $ = (s) => document.querySelector(s);
 
 function fillProjects() {
@@ -24,7 +25,6 @@ function fillProjects() {
     </a>`
   ).join("");
   $("#pf-grid").setAttribute("data-reveal-stagger", "");
-  $("#pf-notion").href = BRAND.notion;
   $("#pf-book").href = BRAND.booking;
 }
 
@@ -39,10 +39,13 @@ async function boot() {
   const lenis = smoothScroll();
   window.lenis = lenis;
   setupReveals();
-  setupSectionPanels(".pf-library, .pf .contact");
+  setupSectionPanels(".pf .contact");
   autoHideHeader(lenis);
   $("#loader").classList.add("is-done");
-  if (!reduceMotion) gsap.from(".pf-library .library", { y: 80, autoAlpha: 0, duration: 1.2, ease: "expo.out", scrollTrigger: { trigger: ".pf-library", start: "top 85%" } });
+  // demo library: one featured design plus two full rows of three, then six more per click
+  await setupDemos($("#demos"), { first: 7, pageSize: 6 });
+  lenis.resize();
+  window.ScrollTrigger?.refresh();
 
   addEventListener("resize", () => {
     stage.resize();

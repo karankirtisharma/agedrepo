@@ -330,8 +330,8 @@ a { color: inherit; }
 .page-portfolio { background: var(--paper); }
 .pf { background: var(--paper); }
 .pf > * { position: relative; z-index: 2; }
-/* project art and the library box sit under the 3D canvas so their objects draw on top */
-.pf > .pf-grid, .pf > .pf-library { z-index: auto; }
+/* project art sits under the 3D canvas so its objects draw on top */
+.pf > .pf-grid { z-index: auto; }
 .pf-hero { padding: 22vh var(--gutter) 8vh; max-width: 1400px; margin: 0 auto; }
 .pf-hero__kicker { color: var(--red); margin-bottom: 18px; }
 .pf-hero__title { font-family: var(--display); font-weight: 400; font-size: clamp(64px, 14vw, 230px); line-height: 0.86; text-transform: uppercase; }
@@ -361,20 +361,69 @@ a { color: inherit; }
 .project__go { margin-top: 6px; transition: transform .5s cubic-bezier(.2,.8,.2,1); }
 .project:hover .project__go { transform: translateX(8px); }
 
-.pf-library { padding: clamp(16px, 2.4vw, 36px) var(--gutter) 14vh; max-width: 1400px; margin: 0 auto; }
-.library {
-  display: grid; grid-template-columns: 1fr 1.1fr; align-items: center; gap: 4vw; min-height: 52vh;
-  background: var(--ink); color: var(--paper); text-decoration: none; border: 3px solid var(--ink);
-  padding: clamp(20px, 3vw, 48px); transition: transform .7s cubic-bezier(.2,.8,.2,1), box-shadow .7s cubic-bezier(.2,.8,.2,1);
+
+/* ---------- Demo library (Portfolio): mobile first, large type and tap targets ---------- */
+.sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+.demos { padding: 12vh var(--gutter) 14vh; max-width: 1400px; margin: 0 auto; color: var(--ink); }
+.demos__head { display: grid; gap: 18px; }
+.demos__kicker { color: var(--red); font-size: 13px; }
+.demos__title { font-family: var(--display); font-weight: 400; font-size: clamp(44px, 7vw, 104px); line-height: 0.92; text-transform: uppercase; }
+@media (min-width: 700px) { .demos__title span { display: block; } }
+.demos__lede { font-size: 18px; line-height: 1.55; max-width: 52ch; }
+/* chips wrap onto more rows rather than scroll sideways, so every option is always in view */
+.demos__chips { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 36px; }
+.chip {
+  flex: none; display: inline-flex; align-items: center; gap: 10px; min-height: 48px; padding: 0 20px;
+  font-family: var(--ui); font-weight: 700; font-size: 16px; white-space: nowrap;
+  border: 2px solid var(--ink); border-radius: 999px; background: var(--paper); color: var(--ink);
+  transition: background-color .25s, color .25s;
 }
-.library:hover, .library:focus-visible { transform: translate(-6px, -6px); box-shadow: 8px 8px 0 var(--red); }
-.library__view { height: min(44vh, 420px); }
-.library__kicker { color: var(--brass); }
-.library__title { font-family: var(--display); font-weight: 400; font-size: clamp(44px, 6.5vw, 110px); line-height: 0.9; text-transform: uppercase; margin: 12px 0 18px; }
-.library__title > span { display: block; }
-.library__text { max-width: 40ch; font-size: 15px; line-height: 1.5; opacity: 0.85; }
-.library__btn { margin-top: 26px; background: var(--red); border-color: var(--red); }
-.library:hover .library__btn { background: var(--paper); color: var(--ink); border-color: var(--paper); }
+.chip__n { font-size: 14px; font-weight: 600; opacity: 0.6; }
+.chip:hover { background: #e2d9c6; }
+.chip[aria-pressed="true"] { background: var(--ink); color: var(--paper); }
+.chip[aria-pressed="true"] .chip__n { opacity: 0.75; }
+.demos__count { margin-top: 16px; font-size: 16px; color: #4d474a; }
+.demos__grid { list-style: none; display: grid; grid-template-columns: 1fr; gap: 28px; margin-top: 20px; }
+.demo {
+  display: grid; grid-template-rows: auto 1fr; background: var(--paper); border: 3px solid var(--ink);
+  transition: transform .5s cubic-bezier(.2,.8,.2,1), box-shadow .5s cubic-bezier(.2,.8,.2,1);
+}
+.demo:hover, .demo:focus-within { transform: translate(-4px, -4px); box-shadow: 6px 6px 0 var(--ink); }
+.demo__shot { position: relative; display: block; overflow: clip; border-bottom: 3px solid var(--ink); background: #e2d9c6; }
+.demo__shot img { display: block; width: 100%; height: auto; aspect-ratio: 16 / 10; object-fit: cover; object-position: top; transition: transform .8s cubic-bezier(.2,.8,.2,1); }
+.demo:hover .demo__shot img { transform: scale(1.03); }
+.demo__bar { display: none; }
+.demo__body { display: grid; gap: 6px; align-content: start; padding: 18px 20px 22px; }
+.demo__cat { font-family: var(--ui); font-weight: 700; font-size: 13px; letter-spacing: 0.06em; text-transform: uppercase; color: var(--red); }
+.demo__name { font-family: var(--ui); font-weight: 800; font-size: 26px; line-height: 1.1; }
+.demo__actions { display: grid; gap: 10px; margin-top: 14px; }
+.demo .btn-solid, .demo .btn-line { justify-content: center; min-height: 52px; padding: 0 18px; font-size: 15px; font-stretch: 112%; }
+.demo .btn-line { color: var(--ink); border-color: var(--ink); background: transparent; }
+.demo .btn-solid:hover { background: var(--red); border-color: var(--red); transform: none; }
+.demo .btn-line:hover { background: var(--ink); color: var(--paper); transform: none; }
+.demos__more { display: flex; margin: 44px auto 0; min-height: 56px; padding: 0 30px; font-size: 15px; }
+.demos__more[hidden] { display: none; }
+@media (min-width: 700px) { .demos__grid { grid-template-columns: repeat(2, 1fr); gap: 32px; } }
+@media (min-width: 1100px) { .demos__grid { grid-template-columns: repeat(3, 1fr); } }
+
+/* direction B: each screenshot sits in a drawn browser window, two big columns */
+.demos--browser .demo__bar {
+  display: flex; align-items: center; gap: 6px; padding: 8px 12px; background: var(--ink); color: var(--paper);
+  font-family: var(--ui); font-size: 12px; font-weight: 600;
+}
+.demos--browser .demo__bar i { width: 9px; height: 9px; border-radius: 50%; background: var(--paper); opacity: 0.55; }
+.demos--browser .demo__bar span { margin-left: 8px; opacity: 0.8; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+@media (min-width: 1100px) { .demos--browser .demos__grid { grid-template-columns: repeat(2, 1fr); gap: 40px; } }
+@media (min-width: 700px) { .demos--browser .demo__actions { grid-template-columns: 1fr 1fr; } }
+
+/* direction C: the first design is a large feature, the rest a grid */
+@media (min-width: 700px) { .demos--feature .demo:first-child { grid-column: 1 / -1; } }
+@media (min-width: 1100px) {
+  .demos--feature .demo:first-child { grid-column: 1 / -1; grid-template-columns: 1.5fr 1fr; grid-template-rows: none; }
+  .demos--feature .demo:first-child .demo__shot { border-bottom: 0; border-right: 3px solid var(--ink); }
+  .demos--feature .demo:first-child .demo__body { align-content: center; padding: 40px; }
+  .demos--feature .demo:first-child .demo__name { font-size: 40px; }
+}
 
 /* ---------- small screens ---------- */
 @media (max-width: 767px) {
@@ -398,8 +447,6 @@ a { color: inherit; }
   /* "PORTFOLIO" is the longest word: size every word so it fits the panel */
   .entry__word { font-size: 10vw; }
   .pf-grid { grid-template-columns: 1fr; }
-  .library { grid-template-columns: 1fr; }
-  .library__view { height: 30vh; }
   .products__cols, .products__sides { flex-direction: column; text-align: center; gap: 14px; }
   .products__cols p:last-child, .products__sides p:last-child { text-align: center; }
   .retail { grid-template-columns: 1fr; }

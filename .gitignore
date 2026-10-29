@@ -7,3 +7,7 @@ __pycache__/
 .vercel/
 .DS_Store
 Thumbs.db
+
+# design kit pages (review only, not part of the site)
+public/kit/
+kit/

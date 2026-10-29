@@ -344,7 +344,8 @@ a { color: inherit; }
   border: 3px solid var(--ink); background: var(--paper);
   transition: transform .7s cubic-bezier(.2,.8,.2,1), box-shadow .7s cubic-bezier(.2,.8,.2,1);
 }
-.project:hover, .project:focus-visible { transform: translate(-6px, -6px); box-shadow: 8px 8px 0 var(--ink); }
+/* not links yet: no lift on hover, default cursor */
+.project { cursor: default; }
 .project__art { position: relative; aspect-ratio: 4 / 3; background: var(--tone); border-bottom: 3px solid var(--ink); overflow: clip; }
 .project__view { position: absolute; inset: 6% 8%; }
 .project__index { position: absolute; left: 16px; top: 12px; z-index: 3; font-family: var(--display); font-size: 44px; color: var(--paper); mix-blend-mode: difference; }
@@ -353,13 +354,12 @@ a { color: inherit; }
   background: url("../textures/hatch.png") center / 340px; mix-blend-mode: multiply; opacity: 0.35;
   clip-path: inset(0 100% 0 0); transition: clip-path 1s cubic-bezier(.7,0,.2,1);
 }
-.project:hover .project__hatch, .project:focus-visible .project__hatch { clip-path: inset(0 0 0 0); }
+.project:hover .project__hatch { clip-path: inset(0 0 0 0); }
 .project__meta { position: relative; z-index: 2; display: grid; gap: 10px; padding: 20px 22px 24px; align-content: start; }
 .project__name { font-family: var(--display); font-weight: 400; font-size: clamp(30px, 3.2vw, 52px); line-height: 0.95; text-transform: uppercase; }
 .project__type { color: var(--red); }
 .project__result { font-size: 15px; line-height: 1.45; max-width: 44ch; }
-.project__go { margin-top: 6px; transition: transform .5s cubic-bezier(.2,.8,.2,1); }
-.project:hover .project__go { transform: translateX(8px); }
+.project__soon { position: absolute; right: 14px; top: 14px; z-index: 3; padding: 7px 12px; background: var(--paper); color: var(--ink); border: 2px solid var(--ink); font-size: 12px; }
 
 
 /* ---------- Demo library (Portfolio): mobile first, large type and tap targets ---------- */

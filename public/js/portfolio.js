@@ -9,9 +9,10 @@ const $ = (s) => document.querySelector(s);
 function fillProjects() {
   $("#pf-grid").innerHTML = PROJECTS.map(
     (p, i) => `
-    <a class="project" href="${p.url}" target="_blank" rel="noopener" style="--tone:${p.color}">
+    <article class="project" style="--tone:${p.color}">
       <div class="project__art">
         <span class="project__index">0${i + 1}</span>
+        <span class="project__soon label">Coming soon</span>
         <div class="project__view" data-view="icon:${p.art}" aria-hidden="true"></div>
         <span class="project__hatch" aria-hidden="true"></span>
       </div>
@@ -20,9 +21,8 @@ function fillProjects() {
         <p class="project__type label">${p.type} · ${p.year}</p>
         <p class="project__result">${p.result}</p>
         <ul class="tags">${p.tags.map((t) => `<li>${t}</li>`).join("")}</ul>
-        <span class="project__go label">View project &nearr;</span>
       </div>
-    </a>`
+    </article>`
   ).join("");
   $("#pf-grid").setAttribute("data-reveal-stagger", "");
   $("#pf-book").href = BRAND.booking;

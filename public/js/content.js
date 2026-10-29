@@ -7,7 +7,7 @@ export const BRAND = {
   sub: "Studio",
   tagline: "Websites people remember. Systems that run themselves.",
   kicker: "Creative web · Automation · SaaS",
-  email: "hello@ruddix.studio",                 // PLACEHOLDER
+  email: "karankirti.work@gmail.com",            // swap for a studio address when you have one
   booking: "https://cal.com/",                    // PLACEHOLDER booking link
   instagram: "https://www.instagram.com/",        // PLACEHOLDER
   linkedin: "https://www.linkedin.com/",          // PLACEHOLDER

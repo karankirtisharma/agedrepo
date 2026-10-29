@@ -4,7 +4,7 @@ import { Story } from "./story.js";
 import { Stage } from "./stage.js";
 import { setSound, isSoundOn, soundPreference } from "./audio.js";
 import { BRAND, MANIFESTO, SERVICES, EXTRA_SERVICE, PROCESS } from "./content.js";
-import { fillBrand, smoothScroll, setupReveals, setupWipe, autoHideHeader, setupSectionPanels, reduceMotion } from "./ui.js";
+import { fillBrand, smoothScroll, setupReveals, setupWipe, autoHideHeader, setupSectionPanels, reduceMotion, gmailLink, jumpWithWipe } from "./ui.js";
 import { showEntry } from "./entry.js";
 
 const $ = (s) => document.querySelector(s);
@@ -46,7 +46,9 @@ function fillCopy() {
   $("#process-dots").innerHTML = PROCESS.map((_, i) => `<button type="button" aria-label="Show step ${i + 1}"></button>`).join("");
 
   $("#contact-book").href = BRAND.booking;
-  $("#contact-email").href = `mailto:${BRAND.email}`;
+  $("#contact-email").href = gmailLink({ to: BRAND.email });
+  $("#contact-email").target = "_blank";
+  $("#contact-email").rel = "noopener";
   $("#contact-email").textContent = BRAND.email;
 }
 
@@ -110,14 +112,14 @@ async function boot() {
   showEntry(lenis, {
     story: () => lenis.scrollTo(0, { immediate: true }),
     portfolio: () => document.querySelector('.pill a[href="/portfolio"]').click(),
-    contact: () => lenis.scrollTo("#contact", { duration: 2.6 }),
+    contact: () => lenis.scrollTo("#contact", { immediate: true, force: true }),
   });
   if (!reduceMotion) {
     gsap.from("#intro-title p", { y: 16, autoAlpha: 0, duration: 1, ease: "power3.out", stagger: 0.1, delay: 0.6 });
   }
 
   $("#nav-story").addEventListener("click", () => lenis.scrollTo($("#story").offsetTop + story.offsetOf("arrival"), { duration: 2.2 }));
-  $("#nav-contact").addEventListener("click", () => lenis.scrollTo("#contact", { duration: 2.2 }));
+  $("#nav-contact").addEventListener("click", () => jumpWithWipe(() => lenis.scrollTo("#contact", { immediate: true, force: true })));
   $("#sound").addEventListener("click", () => setSound(!isSoundOn()));
   // browsers only allow audio after a click or key press: start sound on the first one anywhere
   // (unless the visitor turned it off; the entry menu and the sound button handle themselves)

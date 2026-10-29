@@ -2,15 +2,13 @@
 // tools/shoot_demos.mjs), "I want this design" + "View live site" per demo, and "Show more".
 // The list itself lives in demos/demos.json.
 import { BRAND } from "./content.js";
-import { reduceMotion } from "./ui.js";
+import { reduceMotion, gmailLink } from "./ui.js";
 
-const enc = encodeURIComponent;
-
-/** Email to the studio, already filled in, so asking for a design takes one click. */
+/** Gmail compose to the studio, already filled in, so asking for a design takes one click. */
 function wantLink(d) {
   const subject = `I want the ${d.name} design`;
   const body = `Hi Ruddix,\n\nI'd like a website like the ${d.name} design (${d.category}):\n${d.url}\n\nMy business name:\nWhat we do:\nBest way to reach me:\n`;
-  return `mailto:${BRAND.email}?subject=${enc(subject)}&body=${enc(body)}`;
+  return gmailLink({ to: BRAND.email, subject, body });
 }
 
 function card(d) {
@@ -26,7 +24,7 @@ function card(d) {
         <p class="demo__cat">${d.category}</p>
         <h3 class="demo__name">${d.name}</h3>
         <div class="demo__actions">
-          <a class="btn-solid demo__want" href="${wantLink(d)}">I want this design</a>
+          <a class="btn-solid demo__want" href="${wantLink(d)}" target="_blank" rel="noopener">I want this design</a>
           <a class="btn-line demo__live" href="${d.url}" target="_blank" rel="noopener">View live site<span aria-hidden="true"> &nearr;</span><span class="sr-only"> (${d.name}, opens in a new tab)</span></a>
         </div>
       </div>

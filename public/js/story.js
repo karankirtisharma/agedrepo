@@ -158,7 +158,9 @@ export class Story {
 
     const r = this.renderer;
     r.setScissorTest(false);
-    r.setClearColor(0x111013, 1);
+    // behind the last scene as it scrolls up into the page: its own colour, not black
+    const lastScene = this.scenes.at(-1);
+    r.setClearColor(local > lastScene.end ? lastScene.scene.bg : 0x111013, 1);
     r.clear();
     r.setScissorTest(true);
     this.borderIndex = 0;

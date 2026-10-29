@@ -3,13 +3,21 @@ import { BRAND } from "./content.js";
 
 export const reduceMotion = matchMedia("(prefers-reduced-motion: reduce)").matches;
 
+/** A link that opens Gmail's compose window, pre-filled (no desktop mail app involved). */
+export function gmailLink({ to, subject = "", body = "" }) {
+  const q = new URLSearchParams({ view: "cm", fs: "1", to, su: subject, body });
+  return `https://mail.google.com/mail/?${q}`;
+}
+
 /** Fill every [data-brand] / [data-link] element from content.js. */
 export function fillBrand() {
   document.querySelectorAll("[data-brand]").forEach((el) => (el.textContent = BRAND[el.dataset.brand]));
   document.querySelectorAll("[data-link]").forEach((el) => {
     const k = el.dataset.link;
     if (k === "email") {
-      el.href = `mailto:${BRAND.email}`;
+      el.href = gmailLink({ to: BRAND.email });
+      el.target = "_blank";
+      el.rel = "noopener";
       el.textContent = BRAND.email;
     } else el.href = BRAND[k];
   });
@@ -71,10 +79,19 @@ export function setupSectionPanels(selector) {
   const els = [...document.querySelectorAll(selector)];
   // what the inset uncovers is the colour of the section above (not the page's ink), so a panel
   // opens over matching colour with no black gutter. Colours are read before any wrapping.
+  const solid = (c) => c && c !== "transparent" && c !== "rgba(0, 0, 0, 0)";
   const under = els.map((el) => {
     const prev = el.previousElementSibling;
     const c = prev ? getComputedStyle(prev).backgroundColor : "";
-    return c && c !== "transparent" && c !== "rgba(0, 0, 0, 0)" ? c : null;
+    if (solid(c)) return c;
+    // right after the story the page scrolls up out of its last (red) scene
+    if (prev?.id === "story") return getComputedStyle(document.documentElement).getPropertyValue("--red").trim() || "#b5161e";
+    // otherwise the colour of whatever holds the section (e.g. the portfolio's paper)
+    for (let a = el.parentElement; a; a = a.parentElement) {
+      const p = getComputedStyle(a).backgroundColor;
+      if (solid(p)) return p;
+    }
+    return null;
   });
   els.forEach((el, i) => {
     if (!under[i]) return;
@@ -132,6 +149,26 @@ export function setupWipe() {
         onComplete: () => (location.href = a.href),
       });
     });
+  });
+}
+
+/**
+ * Go somewhere far down the page without scrolling past everything in between: the column wipe
+ * covers the screen, `go()` jumps while it is covered, then the wipe lifts. Reduced motion: jump.
+ */
+export function jumpWithWipe(go) {
+  const { gsap } = window;
+  const cols = document.querySelectorAll(".wipe span");
+  if (reduceMotion || !cols.length) return go();
+  gsap.killTweensOf(cols);
+  gsap.set(cols, { transformOrigin: "50% 100%" });
+  gsap.to(cols, {
+    scaleY: 1, duration: 0.4, ease: "power3.in", stagger: { each: 0.035, from: "random" },
+    onComplete: () => {
+      go();
+      gsap.set(cols, { transformOrigin: "50% 0%" });
+      gsap.to(cols, { scaleY: 0, duration: 0.55, ease: "power3.out", stagger: { each: 0.035, from: "random" }, delay: 0.12 });
+    },
   });
 }
 
